@@ -1,10 +1,19 @@
 package com.juanan.photoManagement.data.entity;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-
-import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 
 /**
@@ -12,22 +21,24 @@ import java.sql.Timestamp;
  * 
  */
 @Entity
-@Table(name="user")
+@Table(name="person")
 @NamedQuery(name="User.findAll", query="SELECT u FROM User u")
 public class User extends AbstractEntity<Integer> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(name="USER_USERID_GENERATOR", sequenceName="SEQ_USER")
+	@SequenceGenerator(name="USER_USERID_GENERATOR", sequenceName="SEQ_USER", allocationSize=1)
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="USER_USERID_GENERATOR")
 	@Column(name="user_id", unique=true, nullable=false)
 	private Integer userId;
 
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="last_login", nullable=false)
-	private Timestamp lastLogin;
+	private Date lastLogin;
 
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="last_sync", nullable=false)
-	private Timestamp lastSync;
+	private Date lastSync;
 
 	@Column(nullable=false, length=16)
 	private String name;
@@ -47,19 +58,19 @@ public class User extends AbstractEntity<Integer> implements Serializable {
 		this.userId = userId;
 	}
 
-	public Timestamp getLastLogin() {
-		return this.lastLogin;
+	public Date getLastLogin() {
+		return lastLogin;
 	}
 
-	public void setLastLogin(Timestamp lastLogin) {
+	public void setLastLogin(Date lastLogin) {
 		this.lastLogin = lastLogin;
 	}
 
-	public Timestamp getLastSync() {
-		return this.lastSync;
+	public Date getLastSync() {
+		return lastSync;
 	}
 
-	public void setLastSync(Timestamp lastSync) {
+	public void setLastSync(Date lastSync) {
 		this.lastSync = lastSync;
 	}
 
