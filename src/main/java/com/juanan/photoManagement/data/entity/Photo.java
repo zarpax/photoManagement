@@ -1,8 +1,16 @@
 package com.juanan.photoManagement.data.entity;
 
 import java.io.Serializable;
-import javax.persistence.*;
 import java.math.BigDecimal;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 
 /**
@@ -27,6 +35,9 @@ public class Photo extends AbstractEntity<BigDecimal> implements Serializable {
 	@Column(nullable=false, length=255)
 	private String path;
 
+	@Id
+	@SequenceGenerator(name="PHOTO_PHOTOID_GENERATOR", sequenceName="SEQ_PHOTO", allocationSize=1)
+	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="PHOTO_PHOTOID_GENERATOR")	
 	@Column(name="photo_id", nullable=false, precision=32)
 	private BigDecimal photoId;
 

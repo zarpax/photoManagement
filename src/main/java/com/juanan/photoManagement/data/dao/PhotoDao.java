@@ -6,7 +6,7 @@ import com.juanan.photoManagement.data.entity.Photo;
 
 public class PhotoDao extends AbstractDAO<Photo, BigDecimal> {
 
-	protected PhotoDao(Class<Photo> clazz) {
+	public PhotoDao() {
 		super(Photo.class);
 	}
 

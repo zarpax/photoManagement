@@ -154,26 +154,16 @@
 			<scope>compile</scope>
 		</dependency>
 
-		<!-- El driver de oracle debe estar en el server (tomcat, jboss, was) -->
- 		<dependency>
-			<groupId>com.oracle</groupId>
-			<artifactId>ojdbc6</artifactId>
-			<version>12.1.0.1</version>
-			<scope>test</scope>
+		<dependency>
+		    <groupId>postgresql</groupId>
+		    <artifactId>postgresql</artifactId>
+		    <version>9.1-901-1.jdbc4</version>
 		</dependency>
 
 		<dependency>
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
 			<version>1.2</version>
-		</dependency>
-
-
-		<!-- Quartz - Tareas programadas -->
-		<dependency>
-			<groupId>org.quartz-scheduler</groupId>
-			<artifactId>quartz</artifactId>
-			<version>2.2.1</version>
 		</dependency>
 
 		<!-- JSON -->

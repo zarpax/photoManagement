@@ -7,7 +7,7 @@ import com.juanan.photoManagement.data.entity.User;
 @Repository
 public class UserDao extends AbstractDAO<User, Integer> {
 
-	protected UserDao(Class<User> clazz) {
+	public UserDao() {
 		super(User.class);
 	}
 

@@ -5,11 +5,11 @@
 		<class>com.juanan.photoManagement.data.entity.Photo</class>
 		<class>com.juanan.photoManagement.data.entity.User</class>
 		<properties>
-			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgresqlDialect" /> 
- 			<property name="hibernate.show_sql" value="false" />
+			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" /> 
+ 			<property name="hibernate.show_sql" value="true" />
 			<property name="hibernate.format_sql" value="true" />
-			<property name="hibernate.use_sql_comments" value="false" />
-			<property name="hibernate.connection.autocommit" value="false" />
+			<property name="hibernate.use_sql_comments" value="true" />
+			<property name="hibernate.connection.autocommit" value="true" />
 			<!--  para deshabilitar la cache poner a false estos tres parametros -->
 			<property name="hibernate.cache.use_second_level_cache" value="false" />
 			<property name="hibernate.cache.use_query_cache" value="false" />
