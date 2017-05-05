@@ -1,6 +1,8 @@
 package com.juanan.photoManagement.data.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 
@@ -12,7 +14,7 @@ import java.sql.Timestamp;
 @Entity
 @Table(name="user")
 @NamedQuery(name="User.findAll", query="SELECT u FROM User u")
-public class User implements Serializable {
+public class User extends AbstractEntity<Integer> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -33,7 +35,8 @@ public class User implements Serializable {
 	@Column(length=256)
 	private String password;
 
-	public User() {
+	public Integer getId() {
+		return this.userId;
 	}
 
 	public Integer getUserId() {

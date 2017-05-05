@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 @Entity
 @Table(name="photo")
 @NamedQuery(name="Photo.findAll", query="SELECT p FROM Photo p")
-public class Photo implements Serializable {
+public class Photo extends AbstractEntity<BigDecimal> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Column(nullable=false, length=128)
@@ -33,7 +33,8 @@ public class Photo implements Serializable {
 	@Column(name="user_id", nullable=false)
 	private Integer userId;
 
-	public Photo() {
+	public BigDecimal getId() {
+		return this.photoId;
 	}
 
 	public String getMd5() {
