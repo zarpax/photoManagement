@@ -1,4 +1,4 @@
-package com.juanan.photoManagement.test.dao;
+package com.juanan.photoManagement.test.business;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.juanan.photoManagement.bussiness.IUserManagement;
+import com.juanan.photoManagement.business.IUserManagement;
 import com.juanan.photoManagement.data.entity.User;
 
 @RunWith(SpringJUnit4ClassRunner.class)

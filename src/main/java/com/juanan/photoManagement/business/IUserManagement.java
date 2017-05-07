@@ -1,4 +1,4 @@
-package com.juanan.photoManagement.bussiness;
+package com.juanan.photoManagement.business;
 
 import com.juanan.photoManagement.data.entity.User;
 

@@ -2,6 +2,8 @@ package com.juanan.photoManagement.data.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
+import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 
 /**
@@ -23,7 +27,21 @@ import javax.persistence.Table;
 public class Photo extends AbstractEntity<BigDecimal> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Column(nullable=false, length=128)
+	@Id
+	@SequenceGenerator(name="PHOTO_PHOTOID_GENERATOR", sequenceName="SEQ_PHOTO")
+	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="PHOTO_PHOTOID_GENERATOR")
+	@Column(name="photo_id", unique=true, nullable=false, precision=32)
+	private BigDecimal photoId;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(nullable=false)
+	private Date created;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(nullable=false)
+	private Date inserted;
+
+	@Column(nullable=false)
 	private String md5;
 
 	@Column(nullable=false, length=12)
@@ -35,21 +53,39 @@ public class Photo extends AbstractEntity<BigDecimal> implements Serializable {
 	@Column(nullable=false, length=255)
 	private String path;
 
-	@Id
-	@SequenceGenerator(name="PHOTO_PHOTOID_GENERATOR", sequenceName="SEQ_PHOTO", allocationSize=1)
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="PHOTO_PHOTOID_GENERATOR")	
-	@Column(name="photo_id", nullable=false, precision=32)
-	private BigDecimal photoId;
-
 	@Column(name="user_id", nullable=false)
 	private Integer userId;
 
 	public BigDecimal getId() {
-		return this.photoId;
+		return photoId;
+	}
+	
+	public BigDecimal getPhotoId() {
+		return photoId;
+	}
+	
+	public void setPhotoId(BigDecimal photoId) {
+		this.photoId = photoId;
+	}
+
+	public Date getCreated() {
+		return created;
+	}
+
+	public void setCreated(Date created) {
+		this.created = created;
+	}
+
+	public Date getInserted() {
+		return inserted;
+	}
+
+	public void setInserted(Date inserted) {
+		this.inserted = inserted;
 	}
 
 	public String getMd5() {
-		return this.md5;
+		return md5;
 	}
 
 	public void setMd5(String md5) {
@@ -78,14 +114,6 @@ public class Photo extends AbstractEntity<BigDecimal> implements Serializable {
 
 	public void setPath(String path) {
 		this.path = path;
-	}
-
-	public BigDecimal getPhotoId() {
-		return this.photoId;
-	}
-
-	public void setPhotoId(BigDecimal photoId) {
-		this.photoId = photoId;
 	}
 
 	public Integer getUserId() {

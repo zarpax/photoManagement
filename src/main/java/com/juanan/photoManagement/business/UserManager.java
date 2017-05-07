@@ -1,4 +1,4 @@
-package com.juanan.photoManagement.bussiness;
+package com.juanan.photoManagement.business;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
