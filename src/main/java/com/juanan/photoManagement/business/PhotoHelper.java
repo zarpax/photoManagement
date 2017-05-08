@@ -3,7 +3,6 @@ package com.juanan.photoManagement.business;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.UUID;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

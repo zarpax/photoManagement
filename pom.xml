@@ -22,8 +22,23 @@
 		<snippetsDirectory>${project.build.directory}/generated-snippets</snippetsDirectory>
 	</properties>
 
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>1.5.2.RELEASE</version>
+    </parent>
 
 	<dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>	
+	
 		<!--  Spring DOC -->
 	    <dependency>
 	        <groupId>org.springframework.restdocs</groupId>
@@ -233,6 +248,10 @@
 	      <id>Jahia</id>
 	      <url>http://maven.jahia.org/maven2/</url>
 	    </repository>
+        <repository>
+            <id>spring-releases</id>
+            <url>https://repo.spring.io/libs-release</url>
+        </repository>	    
 	  </repositories>
 
 	<build>
@@ -254,6 +273,10 @@
 
 
 		<plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>		
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
@@ -301,6 +324,7 @@
 	        <configuration>
 	        </configuration>
 	      </plugin>
+	      
 		</plugins>
 	</build>
 
