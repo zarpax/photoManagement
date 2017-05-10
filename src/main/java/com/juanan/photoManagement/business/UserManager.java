@@ -1,5 +1,7 @@
 package com.juanan.photoManagement.business;
 
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,5 +45,20 @@ public class UserManager implements IUserManagement {
 		
 		return user;
 	}
+
+	@Override
+	public List<User> getAll() {
+		List<User> users = null;
+		
+		try {
+			users = userDao.selectAll();
+		} catch (PhotoManagementDAOException e) {
+			logger.error("Error when trying to find all users", e);
+		}
+		
+		return users;
+	}
+	
+	
 
 }

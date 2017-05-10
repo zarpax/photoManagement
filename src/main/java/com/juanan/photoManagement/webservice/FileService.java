@@ -3,7 +3,11 @@ package com.juanan.photoManagement.webservice;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -11,10 +15,18 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-@RestController
-@RequestMapping(value="fileService")
-public class FileService {
+import com.juanan.photoManagement.business.UserManager;
+import com.juanan.photoManagement.data.entity.User;
 
+@RestController
+@RequestMapping("/fileService")
+public class FileService {
+	
+	static Log logger = LogFactory.getLog(FileService.class);
+	
+	@Autowired
+	private UserManager userManagement;
+	
 	@RequestMapping(value="/upload", method=RequestMethod.POST)
     public @ResponseBody String handleFileUpload( 
             @RequestParam("file") MultipartFile file){
@@ -34,4 +46,16 @@ public class FileService {
             return "You failed to upload " + name + " because the file was empty.";
         }
     }	
+	
+	@RequestMapping(value="/test", method=RequestMethod.GET)
+	public @ResponseBody String test() {
+		logger.debug("Testing running");
+		
+		return "hecho";		
+	}
+	
+	@RequestMapping(value="/allUsers", method=RequestMethod.GET)
+	public @ResponseBody List<User> getAllUsers() {
+		return userManagement.getAll();
+	}
 }

@@ -5,7 +5,7 @@
 		<class>com.juanan.photoManagement.data.entity.Photo</class>
 		<class>com.juanan.photoManagement.data.entity.User</class>
 		<properties>
-			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgresqlDialect" /> 
+			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" /> 
  			<property name="hibernate.show_sql" value="false" />
 			<property name="hibernate.format_sql" value="true" />
 			<property name="hibernate.use_sql_comments" value="false" />
