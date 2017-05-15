@@ -20,7 +20,7 @@ public class Test {
     httpclient.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
 
     HttpPost httppost = new HttpPost("http://localhost:8080/fileService/upload");
-    File file = new File("D:\\Captura.JPG");
+    File file = new File("D:/Amigasw.jpg");
 
     MultipartEntity mpEntity = new MultipartEntity();
     ContentBody cbFile = new FileBody(file, "multipart/form-data");

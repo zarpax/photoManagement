@@ -54,6 +54,20 @@ public class Photo extends AbstractEntity<BigDecimal> implements Serializable {
 
 	@Column(name="user_id", nullable=false)
 	private Integer userId;
+	
+	/** TODO: Review of this properties for seen if they are needed
+	 * path -> no
+	 * 
+	 * New metadata info:
+	 * size
+	 * coords
+	 * taken with
+	 * tags
+	 * valoration
+	 * heigh
+	 * width
+	 * numBits
+	 */
 
 	public BigDecimal getId() {
 		return photoId;
