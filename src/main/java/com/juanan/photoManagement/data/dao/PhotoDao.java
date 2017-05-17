@@ -22,7 +22,12 @@ public class PhotoDao extends AbstractDAO<Photo, BigDecimal> {
 		
 		TypedQuery<Photo> q = getEntityManager().createQuery("select p from Photo p where p.md5=:md5", Photo.class);
 		q.setParameter("md5", md5);
-		photo = q.getSingleResult();		
+
+		List<Photo> resultList = q.getResultList();
+		
+		if ((!resultList.isEmpty()) && (resultList.size() == 1)) {
+			photo = resultList.get(0);
+		}
 		
 		return photo;
 	}

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +16,8 @@ import com.juanan.photoManagement.data.entity.Photo;
 @Service
 @Transactional(rollbackFor={Exception.class})
 public class CreateActualRepository implements ICreateActualRepository {
+	
+	static Log logger = LogFactory.getLog(CreateActualRepository.class);
 
 	@Autowired
 	private PhotoManager pM;
@@ -28,8 +32,10 @@ public class CreateActualRepository implements ICreateActualRepository {
 		
 		List<File> photos = FilesHelper.getFiles(path);
 		
-		Date now = new Date();
+		logger.info("Found " + photos.size() + " photo(s)");
 		
+		Date now = new Date();
+				
 		for(File f : photos) {
 			Date lastModified = new Date(f.lastModified());
 			String generateMD5 = PhotoHelper.generateMD5(f);
@@ -48,7 +54,7 @@ public class CreateActualRepository implements ICreateActualRepository {
 				pM.insert(p);
 			} else {
 				existingPhotos.add(p);
-			}
+			}			
 		}
 		
 		return existingPhotos;		

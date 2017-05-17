@@ -66,6 +66,6 @@ public class FileService {
 	
 	@RequestMapping(value="/startFromDisk", method=RequestMethod.GET)
 	public @ResponseBody List<Photo> startFromDisk() {
-		return aR.getPhotosFromDir("", 0);
+		return aR.getPhotosFromDir("E:/Personal/Seguridad/Multimedia/Fotos", 0);
 	}
 }
