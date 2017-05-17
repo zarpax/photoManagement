@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.juanan.photoManagement.business.CreateActualRepository;
 import com.juanan.photoManagement.business.UserManager;
+import com.juanan.photoManagement.data.entity.Photo;
 import com.juanan.photoManagement.data.entity.User;
 
 @RestController
@@ -26,6 +28,9 @@ public class FileService {
 	
 	@Autowired
 	private UserManager userManagement;
+	
+	@Autowired
+	private CreateActualRepository aR;
 	
 	@RequestMapping(value="/upload", method=RequestMethod.POST)
     public @ResponseBody String handleFileUpload( 
@@ -57,5 +62,10 @@ public class FileService {
 	@RequestMapping(value="/allUsers", method=RequestMethod.GET)
 	public @ResponseBody List<User> getAllUsers() {
 		return userManagement.getAll();
+	}
+	
+	@RequestMapping(value="/startFromDisk", method=RequestMethod.GET)
+	public @ResponseBody List<Photo> startFromDisk() {
+		return aR.getPhotosFromDir("", 0);
 	}
 }
