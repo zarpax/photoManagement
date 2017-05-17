@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.juanan.photoManagement.data.entity.Photo;
-import com.juanan.photoManagement.data.exception.PhotoManagementInfraestructureException;
+import com.juanan.photoManagement.data.entity.User;
 
 public interface IPhotoManagement {
 
@@ -17,10 +17,12 @@ public interface IPhotoManagement {
 	 * 
 	 */
 	
-	public Photo insert(Photo photo); 
+	public static int INSERTED = 1;
+	public static int EXISTS = -2;
+	public static int ERROR = -1;
 	
-	public boolean exists(Photo photo) throws PhotoManagementInfraestructureException;
-	
+	public int insert(Photo photo, User user) throws Exception; 
+		
 	public List<Photo> getPhotosFromLastSync(Date lastSync);
 	
 	

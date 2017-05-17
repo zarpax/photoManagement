@@ -14,6 +14,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 
 /**
@@ -54,6 +55,9 @@ public class Photo extends AbstractEntity<BigDecimal> implements Serializable {
 
 	@Column(name="user_id", nullable=false)
 	private Integer userId;
+	
+	@Transient
+	private byte[] bytes;
 	
 	/** TODO: Review of this properties for seen if they are needed
 	 * path -> no
@@ -137,4 +141,11 @@ public class Photo extends AbstractEntity<BigDecimal> implements Serializable {
 		this.userId = userId;
 	}
 
+	public byte[] getBytes() {
+		return bytes;
+	}
+
+	public void setBytes(byte[] bytes) {
+		this.bytes = bytes;
+	}
 }

@@ -3,6 +3,7 @@ package com.juanan.photoManagement.webservice;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.juanan.photoManagement.business.CreateActualRepository;
+import com.juanan.photoManagement.business.PhotoManager;
 import com.juanan.photoManagement.business.UserManager;
 import com.juanan.photoManagement.data.entity.Photo;
 import com.juanan.photoManagement.data.entity.User;
@@ -30,17 +32,43 @@ public class FileService {
 	private UserManager userManagement;
 	
 	@Autowired
+	private PhotoManager photoManager;
+	
+	@Autowired
 	private CreateActualRepository aR;
 	
 	@RequestMapping(value="/upload", method=RequestMethod.POST)
     public @ResponseBody String handleFileUpload( 
-            @RequestParam("file") MultipartFile file){
-            String name = "test11";
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("filename") String name,
+            @RequestParam("mime") String mime,
+            @RequestParam("userId") Integer userId,
+            @RequestParam("creationDate") String creationDate) {
+
+		/** TODO: Validation params
+		 * file is not empty
+		 * filename is a correct name
+		 * correct and supported mimetype
+		 * userId is a valid user in system
+		 * creationDate a valid date
+		 */
+		
         if (!file.isEmpty()) {
             try {
+            	Photo p = new Photo();
+            	p.setBytes(file.getBytes());
+            	p.setName(name);
+            	p.setMime(mime);
+            	p.setCreated(new Date()); // TODO: Convert param to Date
+            	p.setUserId(userId);
+            	
+            	User user = new User();
+            	user.setUserId(userId);
+            	
+            	int result = photoManager.insert(p, user);
+            	
                 byte[] bytes = file.getBytes();
-                BufferedOutputStream stream = 
-                        new BufferedOutputStream(new FileOutputStream(new File(name + "-uploaded")));
+                BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(new File(name + "-uploaded")));
                 stream.write(bytes);
                 stream.close();
                 return "You successfully uploaded " + name + " into " + name + "-uploaded !";
@@ -66,6 +94,10 @@ public class FileService {
 	
 	@RequestMapping(value="/startFromDisk", method=RequestMethod.GET)
 	public @ResponseBody List<Photo> startFromDisk() {
-		return aR.getPhotosFromDir("E:/Personal/Seguridad/Multimedia/Fotos", 0);
+		try {
+			return aR.getPhotosFromDir("E:/Personal/Seguridad/Multimedia/Fotos", 0);
+		} catch (Exception e) {
+			return null;
+		}
 	}
 }

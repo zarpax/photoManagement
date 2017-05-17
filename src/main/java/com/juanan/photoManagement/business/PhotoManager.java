@@ -1,5 +1,6 @@
 package com.juanan.photoManagement.business;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.juanan.photoManagement.data.dao.PhotoDao;
 import com.juanan.photoManagement.data.entity.Photo;
+import com.juanan.photoManagement.data.entity.User;
 import com.juanan.photoManagement.data.exception.PhotoManagementDAOException;
 import com.juanan.photoManagement.data.exception.PhotoManagementInfraestructureException;
 
@@ -25,20 +27,39 @@ public class PhotoManager implements IPhotoManagement {
 	
 	
 	@Override
-	public Photo insert(Photo photo) {
-		Photo newPhoto = null;
+	public int insert(Photo photo, User user) throws Exception {
+		int result = -1;
 		
 		try {
-			newPhoto = photoDao.insert(photo);
+			if (!exists(photo)) {		
+				photo.setName(FilesHelper.getFilenamePathForPhoto(photo, user));
+				photo.setPath(FilesHelper.getFilePathForPhoto(photo, user));
+				
+				Photo inserted = photoDao.insert(photo);
+				
+				
+				
+				if ((inserted == null) || (inserted.getId() == null)) {
+					result = IPhotoManagement.ERROR;
+				} else {
+					FilesHelper.writeFile(photo.getBytes(), photo.getPath() + photo.getName());
+				}
+				
+			} else {
+				result = IPhotoManagement.EXISTS;
+			}
 		} catch (PhotoManagementDAOException e) {
 			logger.error("Exception when inserting photo.", e);
+		} catch (IOException e) {
+			logger.error("Exception when writing file", e);
+			throw new Exception(e);
 		}		
 		
-		return newPhoto;
+		return result;
 	}
 
-	@Override
-	public boolean exists(Photo photo) {
+	
+	private boolean exists(Photo photo) {
 		boolean exists = false;
 		
 		if (photo.getMd5() == null) {

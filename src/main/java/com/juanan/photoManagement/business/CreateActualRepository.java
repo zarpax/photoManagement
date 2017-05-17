@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.juanan.photoManagement.data.entity.Photo;
+import com.juanan.photoManagement.data.entity.User;
 
 @Service
 @Transactional(rollbackFor={Exception.class})
@@ -26,7 +27,7 @@ public class CreateActualRepository implements ICreateActualRepository {
 	private UserManager uM;
 	
 	@Override
-	public List<Photo> getPhotosFromDir(String path, Integer defaultUserId) {
+	public List<Photo> getPhotosFromDir(String path, Integer defaultUserId) throws Exception {
 		
 		List<Photo> existingPhotos = new ArrayList<Photo>();
 		
@@ -50,9 +51,11 @@ public class CreateActualRepository implements ICreateActualRepository {
 			p.setMime("image/jpeg");
 			p.setMd5(generateMD5);
 			
-			if (!pM.exists(p)) {
-				pM.insert(p);
-			} else {
+			p.setUserId(0);
+			User u = new User();
+			u.setUserId(0);
+			
+			if (pM.insert(p, u) == IPhotoManagement.EXISTS) {
 				existingPhotos.add(p);
 			}			
 		}

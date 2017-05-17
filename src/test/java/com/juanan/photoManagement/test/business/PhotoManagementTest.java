@@ -15,6 +15,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.juanan.photoManagement.business.IPhotoManagement;
 import com.juanan.photoManagement.business.PhotoHelper;
 import com.juanan.photoManagement.data.entity.Photo;
+import com.juanan.photoManagement.data.entity.User;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:applicationContext-test.xml" })
@@ -25,7 +26,7 @@ public class PhotoManagementTest {
 	private IPhotoManagement photoManager;
 	
 	@Test
-	public void insertPhoto() throws ParseException {
+	public void insertPhoto() throws Exception {
 		Photo p = new Photo();
 		
 		SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -37,11 +38,14 @@ public class PhotoManagementTest {
 		p.setMime("mime");
 		p.setName("name");
 		p.setPath("path");
-		p.setUserId(23);
+		p.setUserId(0);
+		
+		User u = new User();
+		u.setUserId(0);
 		
 		File f = new File("D:/Amigasw.jpg");
 		p.setMd5(PhotoHelper.generateMD5(f));		
 		
-		photoManager.insert(p);
+		photoManager.insert(p, u);
 	}
 }
