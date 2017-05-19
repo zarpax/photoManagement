@@ -1,14 +1,22 @@
 package com.juanan.photoManagement.business;
 
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.awt.image.WritableRaster;
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
@@ -46,10 +54,45 @@ public class FilesHelper {
 	}
 	
 	public static void writeFile(byte[] fileInfo, String fullPathToFile) throws IOException {
-        BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(new File(fullPathToFile)));
+        File file = new File(fullPathToFile);
+        file.getParentFile().mkdirs();
+        file.createNewFile();
+		BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(file, false));
         stream.write(fileInfo);
         stream.close();		
 	}
+	
+	public static byte[] readIPFromNIO(String pathToFile) throws IOException {
+		  FileInputStream fis = new FileInputStream(new File(pathToFile));
+		  FileChannel channel = fis.getChannel();
+		  ByteBuffer bb = ByteBuffer.allocateDirect(64*1024);
+		  bb.clear();
+		  byte[] ipArr = new byte [(int)channel.size()/8];
+		  System.out.println("File size: "+channel.size()/8);
+		  long len = 0;
+		  int offset = 0;
+		  while ((len = channel.read(bb))!= -1){
+		    bb.flip();
+		    //System.out.println("Offset: "+offset+"\tlen: "+len+"\tremaining:"+bb.hasRemaining());
+		    bb.get(ipArr,offset,(int)len/8);
+		    offset += (int)len/8;
+		    bb.clear();
+		  }
+		  
+		  return ipArr;
+		}
+	
+	public static byte[] extractBytes (String ImageName) throws IOException {
+		 // open image
+		 File imgPath = new File(ImageName);
+		 BufferedImage bufferedImage = ImageIO.read(imgPath);
+
+		 // get DataBufferBytes from Raster
+		 WritableRaster raster = bufferedImage .getRaster();
+		 DataBufferByte data   = (DataBufferByte) raster.getDataBuffer();
+
+		 return ( data.getData() );
+		}	
 	
 	public static String getFilePathForPhoto(Photo p, User u) {
 		String path = PHOTO_PATH.replace(PARAM_CREATED_DATE, dateFormat.format(p.getCreated()));
@@ -62,7 +105,7 @@ public class FilesHelper {
 		
 		return filename;
 	}	
-
+	
 	public static void main(String... argv) {
 		Photo p = new Photo();
 		User u = new User();

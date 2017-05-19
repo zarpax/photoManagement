@@ -36,10 +36,18 @@ public class CreateActualRepository implements ICreateActualRepository {
 		logger.info("Found " + photos.size() + " photo(s)");
 		
 		Date now = new Date();
-				
+		
+		byte[] data = null;
+		Date lastModified = null;
+		String generateMD5 = null;
+		
+		User u = new User();
+		u.setUserId(0);
+		u.setName("SISTEMA");		
+		
 		for(File f : photos) {
-			Date lastModified = new Date(f.lastModified());
-			String generateMD5 = PhotoHelper.generateMD5(f);
+			lastModified = new Date(f.lastModified());
+			generateMD5 = PhotoHelper.generateMD5(f);
 			
 			Photo p = new Photo();
 			p.setUserId(defaultUserId);
@@ -52,16 +60,38 @@ public class CreateActualRepository implements ICreateActualRepository {
 			p.setMd5(generateMD5);
 			
 			p.setUserId(0);
-			User u = new User();
-			u.setUserId(0);
+			
+			logger.info("Fichero [" + f.getAbsoluteFile().getAbsolutePath() + "] size[" +f.length() + "]");
+//			Path pathFile = Paths.get(f.getAbsoluteFile().getAbsolutePath());
+//			byte[] data = Files.readAllBytes(pathFile);
+//			data = FileUtils.readFileToByteArray(f);
+//			data = FilesHelper.readIPFromNIO(f.getAbsoluteFile().getAbsolutePath());
+			data = FilesHelper.extractBytes(f.getAbsoluteFile().getAbsolutePath());
+//			byte[] data = FilesHelper.readFileOri2(f.getAbsoluteFile().getAbsolutePath());
+			p.setBytes(data);
 			
 			if (pM.insert(p, u) == IPhotoManagement.EXISTS) {
 				existingPhotos.add(p);
-			}			
+			}	
+			
+			data = null;
+			p.setBytes(null);
+			lastModified = null;
+			generateMD5 = null;
+			p = null;
 		}
 		
 		return existingPhotos;		
 	}
 
-	
+	@Override
+	public Photo getPhotosFromDir(Photo p, User u) throws Exception {
+		Photo photo = null;
+
+		if (pM.insert(p, u) == IPhotoManagement.EXISTS) {
+			photo = p;
+		}	
+		
+		return photo;
+	}
 }

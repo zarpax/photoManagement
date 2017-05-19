@@ -34,6 +34,7 @@ public class PhotoHelper {
 		try {
 			fI = new FileInputStream(file);
 			md5String = DigestUtils.md5DigestAsHex(fI);
+			fI.close();
 		} catch (IOException e) {
 			logger.error("Exception when generating md5", e);
 		}

@@ -1,4 +1,4 @@
-package com.juanan.photoManagement.clientTest;
+package com.juanan.photoManagement.forTesting.clientTest;
 
 import java.io.File;
 
