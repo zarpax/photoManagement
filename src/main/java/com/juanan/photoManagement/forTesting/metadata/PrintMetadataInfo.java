@@ -16,6 +16,7 @@ import com.juanan.photoManagement.business.FilesHelper;
 
 public class PrintMetadataInfo {
 
+	// Used library: https://github.com/drewnoakes/metadata-extractor
 	static Log logger = LogFactory.getLog(PrintMetadataInfo.class);
 
 	public static void print(String filename, Metadata metadata)
