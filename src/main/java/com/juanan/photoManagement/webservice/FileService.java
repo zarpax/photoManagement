@@ -118,7 +118,8 @@ public class FileService {
 		
 		try {			
 			
-			List<File> photos = FilesHelper.getFiles("E:/Personal/Seguridad/Multimedia/Fotos");
+			List<File> photos = FilesHelper.getFiles("C:/Users/jles/Pictures");
+			//List<File> photos = FilesHelper.getFiles("E:/Personal/Seguridad/Multimedia/Fotos");
 			
 			logger.info("Found " + photos.size() + " photo(s)");
 			
@@ -133,7 +134,8 @@ public class FileService {
 			u.setName("SISTEMA");		
 			
 			for(File f : photos) { 
-				if (Files.probeContentType(f.toPath()).contains("image")) {
+				logger.info("Procesando fichero [" + f.getAbsoluteFile().getAbsolutePath() + "] size[" +f.length() + "]");
+				if ((Files.probeContentType(f.toPath()) != null) && (Files.probeContentType(f.toPath()).contains("image"))) {
 					lastModified = new Date(f.lastModified());
 					generateMD5 = PhotoHelper.generateMD5(f);
 
@@ -144,7 +146,7 @@ public class FileService {
 					p.setInserted(now);
 					p.setName(f.getName());
 					p.setPath(f.getAbsolutePath());
-					p.setMime("image/jpeg");
+					p.setMime(Files.probeContentType(f.toPath()));
 					p.setMd5(generateMD5);
 
 					//logger.info("Fichero [" + f.getAbsoluteFile().getAbsolutePath() + "] size[" +f.length() + "]");
@@ -166,13 +168,14 @@ public class FileService {
 					generateMD5 = null;
 					p = null;
 				} else {
-					logger.info("No es imagen [" + f.getAbsoluteFile().getAbsolutePath() + "]");
+					logger.info("No es imagen [" + f.getAbsoluteFile().getAbsolutePath() + "] " + Files.probeContentType(f.toPath()));
 				}
 			}
 			
 			return existingPhotos;		
 			
 		} catch (Exception e) {
+			logger.error("Ha ocurrido una excepcion", e);
 			return existingPhotos;
 		}
 	}	

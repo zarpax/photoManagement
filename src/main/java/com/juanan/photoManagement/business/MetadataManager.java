@@ -60,24 +60,16 @@ public class MetadataManager implements IMetadataManagement {
 					metadataType.setMetadataTypeName(directory.getName());
 					metadataType = metadataTypeDao.insert(metadataType);
 				}
-				
-				
-				
-				//
-				// Each Directory stores values in Tag objects
-				//
+
 				for (Tag tag : directory.getTags()) {
 					PhotoMetadata m = new PhotoMetadata();
 					m.setMetadataTypeBean(metadataType);
-					m.setName(tag.getTagName());
-					m.setValue(tag.getDescription());
+					m.setName(tag.getTagName().replaceAll("[^\\x00-\\x7F]", "").trim());
+					m.setValue(tag.getDescription().replaceAll("[^\\x00-\\x7F]", "").trim());
 					m.setPhoto(p);
 					list.add(m);
 				}
 
-				//
-				// Each Directory may also contain error messages
-				//
 				if (directory.hasErrors()) {
 					for (String error : directory.getErrors()) {
 						logger.error("ERROR: " + error);

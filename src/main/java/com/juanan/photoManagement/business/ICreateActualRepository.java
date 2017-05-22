@@ -7,7 +7,7 @@ import com.juanan.photoManagement.data.entity.User;
 
 public interface ICreateActualRepository {
 
-	public List<Photo> getPhotosFromDir(String path, Integer defaultUserId) throws Exception ;
+//	public List<Photo> getPhotosFromDir(String path, Integer defaultUserId) throws Exception ;
 	
 	public Photo getPhotosFromDir(Photo p, User u) throws Exception ;
 }
