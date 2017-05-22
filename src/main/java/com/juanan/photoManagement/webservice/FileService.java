@@ -1,6 +1,7 @@
 package com.juanan.photoManagement.webservice;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,10 +19,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.juanan.photoManagement.business.CreateActualRepository;
 import com.juanan.photoManagement.business.FilesHelper;
+import com.juanan.photoManagement.business.MetadataManager;
 import com.juanan.photoManagement.business.PhotoHelper;
 import com.juanan.photoManagement.business.PhotoManager;
 import com.juanan.photoManagement.business.UserManager;
 import com.juanan.photoManagement.data.entity.Photo;
+import com.juanan.photoManagement.data.entity.PhotoMetadata;
 import com.juanan.photoManagement.data.entity.User;
 
 @RestController
@@ -38,6 +41,9 @@ public class FileService {
 	
 	@Autowired
 	private CreateActualRepository aR;
+	
+	@Autowired
+	private MetadataManager mM;	
 	
 	@RequestMapping(value="/upload", method=RequestMethod.POST)
     public @ResponseBody String handleFileUpload( 
@@ -57,16 +63,16 @@ public class FileService {
 		
         if (!file.isEmpty()) {
             try {
+            	User user = new User();
+            	user.setUserId(userId);
+            	
             	Photo p = new Photo();
             	p.setBytes(file.getBytes());
             	p.setName(name);
             	p.setMime(mime);
             	p.setCreated(new Date()); // TODO: Convert param to Date
-            	p.setUserId(userId);
-            	
-            	User user = new User();
-            	user.setUserId(userId);
-            	
+            	p.setUser(user);
+            	            	
             	byte[] bytes = file.getBytes();
             	p.setBytes(bytes);
             	
@@ -126,37 +132,42 @@ public class FileService {
 			u.setUserId(0);
 			u.setName("SISTEMA");		
 			
-			for(File f : photos) {
-				lastModified = new Date(f.lastModified());
-				generateMD5 = PhotoHelper.generateMD5(f);
-				
-				Photo p = new Photo();
-				p.setUserId(0);
-				p.setCreated(lastModified);
-				p.setCreated(lastModified);
-				p.setInserted(now);
-				p.setName(f.getName());
-				p.setPath(f.getAbsolutePath());
-				p.setMime("image/jpeg");
-				p.setMd5(generateMD5);
-				
-				p.setUserId(0);
-				
-				logger.info("Fichero [" + f.getAbsoluteFile().getAbsolutePath() + "] size[" +f.length() + "]");
-				data = FileUtils.readFileToByteArray(f);
-				p.setBytes(data);
-				
-				Photo photo = aR.getPhotosFromDir(p, u);
-				
-				if (photo != null) {
-					existingPhotos.add(photo);
+			for(File f : photos) { 
+				if (Files.probeContentType(f.toPath()).contains("image")) {
+					lastModified = new Date(f.lastModified());
+					generateMD5 = PhotoHelper.generateMD5(f);
+
+					Photo p = new Photo();
+					p.setUser(u);
+					p.setCreated(lastModified);
+					p.setCreated(lastModified);
+					p.setInserted(now);
+					p.setName(f.getName());
+					p.setPath(f.getAbsolutePath());
+					p.setMime("image/jpeg");
+					p.setMd5(generateMD5);
+
+					//logger.info("Fichero [" + f.getAbsoluteFile().getAbsolutePath() + "] size[" +f.length() + "]");
+					data = FileUtils.readFileToByteArray(f);
+					p.setBytes(data);
+
+					Photo photo = aR.getPhotosFromDir(p, u);
+
+					if (photo != null) {
+						existingPhotos.add(photo);
+					} else {				
+						List<PhotoMetadata> metadata = mM.getPhotoFileMetadata(p, f);
+						mM.insertMetadata(metadata);
+					}
+
+					data = null;
+					p.setBytes(null);
+					lastModified = null;
+					generateMD5 = null;
+					p = null;
+				} else {
+					logger.info("No es imagen [" + f.getAbsoluteFile().getAbsolutePath() + "]");
 				}
-				
-				data = null;
-				p.setBytes(null);
-				lastModified = null;
-				generateMD5 = null;
-				p = null;
 			}
 			
 			return existingPhotos;		

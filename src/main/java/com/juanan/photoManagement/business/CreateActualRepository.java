@@ -26,6 +26,9 @@ public class CreateActualRepository implements ICreateActualRepository {
 	@Autowired
 	private UserManager uM;
 	
+	@Autowired
+	private MetadataManager mM;
+	
 	@Override
 	public List<Photo> getPhotosFromDir(String path, Integer defaultUserId) throws Exception {
 		
@@ -50,7 +53,6 @@ public class CreateActualRepository implements ICreateActualRepository {
 			generateMD5 = PhotoHelper.generateMD5(f);
 			
 			Photo p = new Photo();
-			p.setUserId(defaultUserId);
 			p.setCreated(lastModified);
 			p.setCreated(lastModified);
 			p.setInserted(now);
@@ -59,21 +61,17 @@ public class CreateActualRepository implements ICreateActualRepository {
 			p.setMime("image/jpeg");
 			p.setMd5(generateMD5);
 			
-			p.setUserId(0);
+			p.setUser(u);
 			
 			logger.info("Fichero [" + f.getAbsoluteFile().getAbsolutePath() + "] size[" +f.length() + "]");
-//			Path pathFile = Paths.get(f.getAbsoluteFile().getAbsolutePath());
-//			byte[] data = Files.readAllBytes(pathFile);
-//			data = FileUtils.readFileToByteArray(f);
-//			data = FilesHelper.readIPFromNIO(f.getAbsoluteFile().getAbsolutePath());
 			data = FilesHelper.extractBytes(f.getAbsoluteFile().getAbsolutePath());
-//			byte[] data = FilesHelper.readFileOri2(f.getAbsoluteFile().getAbsolutePath());
 			p.setBytes(data);
+			
 			
 			if (pM.insert(p, u) == IPhotoManagement.EXISTS) {
 				existingPhotos.add(p);
-			}	
-			
+			}
+						
 			data = null;
 			p.setBytes(null);
 			lastModified = null;

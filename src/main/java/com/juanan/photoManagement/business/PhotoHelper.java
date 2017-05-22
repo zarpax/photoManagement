@@ -16,7 +16,6 @@ public class PhotoHelper {
 	
 	/**
 	 * TODO: Take a look to Commons-image for image operations
-	 * https://commons.apache.org/proper/commons-imaging/sampleusage.html
 	 * 
 	 * Take a look to http://im4java.sourceforge.net/ too. Appears to be very interesting
 	 * 

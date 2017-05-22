@@ -23,7 +23,5 @@ public interface IPhotoManagement {
 	
 	public int insert(Photo photo, User user) throws Exception; 
 		
-	public List<Photo> getPhotosFromLastSync(Date lastSync);
-	
-	
+	public List<Photo> getPhotosFromLastSync(Date lastSync);		
 }

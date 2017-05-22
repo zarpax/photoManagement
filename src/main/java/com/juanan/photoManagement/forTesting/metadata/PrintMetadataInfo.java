@@ -2,7 +2,9 @@ package com.juanan.photoManagement.forTesting.metadata;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -12,6 +14,7 @@ import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.Tag;
+import com.drew.metadata.exif.ExifIFD0Directory;
 import com.juanan.photoManagement.business.FilesHelper;
 
 public class PrintMetadataInfo {
@@ -35,6 +38,7 @@ public class PrintMetadataInfo {
 			//
 			for (Tag tag : directory.getTags()) {
 				logger.info(tag);
+				
 			}
 
 			//
@@ -49,16 +53,47 @@ public class PrintMetadataInfo {
 		
 		logger.info("*************************************************************************************");
 	}	
+	
+	public static String getDevice(Metadata metadata) {
+		ExifIFD0Directory directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
+		
+		StringBuilder sB = new StringBuilder();
+		
+		if (directory != null) {
+			if (directory.getDescription(ExifIFD0Directory.TAG_MAKE) != null) {
+				sB.append(directory.getDescription(ExifIFD0Directory.TAG_MAKE).trim());
+			}
+
+			if (directory.getDescription(ExifIFD0Directory.TAG_MODEL) != null) {
+				if (sB.length() > 0) {
+					sB.append("-");
+				}
+
+				sB.append(directory.getDescription(ExifIFD0Directory.TAG_MODEL).trim());
+			}
+		}
+		
+		return sB.toString();
+
+	}
 
 	public static void main(String... argv) {
-//		List<File> photos = FilesHelper.getFiles("E:/Personal/Seguridad/Multimedia/Fotos");
-		List<File> photos = FilesHelper.getFiles("C:/Users/jles/Pictures");
+		List<File> photos = FilesHelper.getFiles("E:/Personal/Seguridad/Multimedia/Fotos");
+//		List<File> photos = FilesHelper.getFiles("C:/Users/jles/Pictures");
 
+		Map<String, String> devices = new HashMap<String, String>();
+		
 		for(File f : photos) {
 			try {
-				Metadata metadata = ImageMetadataReader.readMetadata(f);
+				Metadata metadata = ImageMetadataReader.readMetadata(f);				
+//				PrintMetadataInfo.print(f.getAbsolutePath().toString(), metadata);				
+				String device = PrintMetadataInfo.getDevice(metadata);
 				
-				PrintMetadataInfo.print(f.getAbsolutePath().toString(), metadata);
+				if ((!device.isEmpty()) && (!devices.containsKey(device))) {
+					logger.info("Dispisitivo nuevo [" + device + "]");
+					devices.put(device, device);
+				}
+								
 			} catch (ImageProcessingException e) {
 				// handle exception
 			} catch (IOException e) {

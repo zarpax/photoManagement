@@ -9,6 +9,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -53,8 +55,10 @@ public class Photo extends AbstractEntity<BigDecimal> implements Serializable {
 	@Column(nullable=false, length=255)
 	private String path;
 
-	@Column(name="user_id", nullable=false)
-	private Integer userId;
+	//@Column(name="person_id", nullable=false)
+	@ManyToOne
+	@JoinColumn(name="person_id", nullable=false)	
+	private User user;
 	
 	@Transient
 	private byte[] bytes;
@@ -133,12 +137,12 @@ public class Photo extends AbstractEntity<BigDecimal> implements Serializable {
 		this.path = path;
 	}
 
-	public Integer getUserId() {
-		return this.userId;
+	public User getUser() {
+		return user;
 	}
 
-	public void setUserId(Integer userId) {
-		this.userId = userId;
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	public byte[] getBytes() {
