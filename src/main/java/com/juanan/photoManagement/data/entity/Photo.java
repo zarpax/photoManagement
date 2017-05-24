@@ -30,7 +30,7 @@ public class Photo extends AbstractEntity<BigDecimal> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(name="PHOTO_PHOTOID_GENERATOR", sequenceName="SEQ_PHOTO")
+	@SequenceGenerator(name="PHOTO_PHOTOID_GENERATOR", sequenceName="SEQ_PHOTO", allocationSize=1)
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="PHOTO_PHOTOID_GENERATOR")
 	@Column(name="photo_id", unique=true, nullable=false, precision=32)
 	private BigDecimal photoId;

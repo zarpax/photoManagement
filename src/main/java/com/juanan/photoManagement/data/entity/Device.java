@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -24,14 +25,16 @@ public class Device extends AbstractEntity<Integer> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(name="DEVICE_DEVICEID_GENERATOR", sequenceName="SEQ_DEVICE")
+	@SequenceGenerator(name="DEVICE_DEVICEID_GENERATOR", sequenceName="SEQ_DEVICE", allocationSize=1)
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="DEVICE_DEVICEID_GENERATOR")
 	@Column(name="device_id", unique=true, nullable=false)
 	private Integer deviceId;
 
+
+	@Column(nullable = true)
 	private Boolean active;
 
-	@Column(nullable=false, length=50)
+	@Column(nullable=false, length=256)
 	private String name;
 
 	@Column(name="screen_heigth")
@@ -40,9 +43,9 @@ public class Device extends AbstractEntity<Integer> implements Serializable {
 	@Column(name="screen_width")
 	private Integer screenWidth;
 
-	//@Column(name="person_id")
-	@JoinColumn(name="person_id", nullable=false)		
-	private User userId;
+	@ManyToOne
+	@JoinColumn(name="person_id", nullable=true)		
+	private User user;
 
 	public Device() {
 	}
@@ -90,11 +93,11 @@ public class Device extends AbstractEntity<Integer> implements Serializable {
 		this.screenWidth = screenWidth;
 	}
 
-	public User getUserId() {
-		return userId;
+	public User getUser() {
+		return user;
 	}
 
-	public void setUserId(User userId) {
-		this.userId = userId;
+	public void setUser(User userId) {
+		this.user = userId;
 	}
 }

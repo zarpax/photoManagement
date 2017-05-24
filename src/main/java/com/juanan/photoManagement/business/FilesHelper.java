@@ -29,8 +29,8 @@ public class FilesHelper {
 
 	static Log logger = LogFactory.getLog(FilesHelper.class);
 	
-	private static final String FORMAT_DATE = "yyyymmdd";
-	private static final String FORMAT_DATETIME = "yyyymmdd_HHmmss";
+	private static final String FORMAT_DATE = "yyyyMMdd";
+	private static final String FORMAT_DATETIME = "yyyyMMdd_HHmmss";
 	
 	private static final String PARAM_CREATED_DATE = "#{CD}";
 	private static final String PARAM_CREATED_DATETIME = "#{CDT}";

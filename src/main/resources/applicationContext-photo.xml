@@ -65,7 +65,7 @@
 	<!-- Provides access to the JNDI datasource -->
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="org.postgresql.Driver" />
-		<property name="url" value="jdbc:postgresql://192.168.2.7:5432/photo_management" />
+		<property name="url" value="jdbc:postgresql://192.168.2.7:5432/photo_management_utf8?charSet=UNICODE" />
 		<property name="username" value="photo_management" />
 		<property name="password" value="photo_management" />
 	</bean>

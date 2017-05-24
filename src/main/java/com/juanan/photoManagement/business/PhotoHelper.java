@@ -5,12 +5,14 @@ import java.awt.image.DataBuffer;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.DigestUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 public class PhotoHelper {
 	
@@ -32,6 +34,21 @@ public class PhotoHelper {
 		
 		try {
 			fI = new FileInputStream(file);
+			md5String = DigestUtils.md5DigestAsHex(fI);
+			fI.close();
+		} catch (IOException e) {
+			logger.error("Exception when generating md5", e);
+		}
+		
+		return md5String;
+	}
+	
+	public static String generateMD5(MultipartFile file) {
+		String md5String = null;
+		InputStream fI = null;
+		
+		try {
+			fI = file.getInputStream();
 			md5String = DigestUtils.md5DigestAsHex(fI);
 			fI.close();
 		} catch (IOException e) {

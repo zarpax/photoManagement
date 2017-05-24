@@ -25,7 +25,7 @@ public class PhotoMetadata extends AbstractEntity<Long> implements Serializable 
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(name="PHOTO_METADATA_METADATAID_GENERATOR", sequenceName="SEQ_PHOTO_METADATA")
+	@SequenceGenerator(name="PHOTO_METADATA_METADATAID_GENERATOR", sequenceName="SEQ_PHOTO_METADATA", allocationSize=1)
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="PHOTO_METADATA_METADATAID_GENERATOR")
 	@Column(name="metadata_id", unique=true, nullable=false, precision=32)
 	private Long metadataId;
@@ -38,7 +38,7 @@ public class PhotoMetadata extends AbstractEntity<Long> implements Serializable 
 	@JoinColumn(name="photo_id", nullable=false)	
 	private Photo photo;
 
-	@Column(nullable=false, length=255)
+	@Column(nullable=false)
 	private String value;
 
 	//bi-directional many-to-one association to MetadataType

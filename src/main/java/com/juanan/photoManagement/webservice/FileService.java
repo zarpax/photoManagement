@@ -1,12 +1,11 @@
 package com.juanan.photoManagement.webservice;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,20 +17,24 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.juanan.photoManagement.business.CreateActualRepository;
+import com.juanan.photoManagement.business.DeviceManager;
 import com.juanan.photoManagement.business.FilesHelper;
-import com.juanan.photoManagement.business.MetadataManager;
+import com.juanan.photoManagement.business.IPhotoManagement;
 import com.juanan.photoManagement.business.PhotoHelper;
 import com.juanan.photoManagement.business.PhotoManager;
 import com.juanan.photoManagement.business.UserManager;
+import com.juanan.photoManagement.data.entity.Device;
 import com.juanan.photoManagement.data.entity.Photo;
-import com.juanan.photoManagement.data.entity.PhotoMetadata;
 import com.juanan.photoManagement.data.entity.User;
+import com.juanan.photoManagement.data.exception.PhotoManagementDAOException;
 
 @RestController
 @RequestMapping("/fileService")
 public class FileService {
 	
 	static Log logger = LogFactory.getLog(FileService.class);
+	
+	private final String PHOTO_REPOSITORY_PATH = "E:/Personal/Seguridad/Multimedia/Fotos";// "C:/Users/jles/Pictures"
 	
 	@Autowired
 	private UserManager userManagement;
@@ -43,13 +46,13 @@ public class FileService {
 	private CreateActualRepository aR;
 	
 	@Autowired
-	private MetadataManager mM;	
+	private DeviceManager dM;	
+	
+	
 	
 	@RequestMapping(value="/upload", method=RequestMethod.POST)
     public @ResponseBody String handleFileUpload( 
             @RequestParam("file") MultipartFile file,
-            @RequestParam("filename") String name,
-            @RequestParam("mime") String mime,
             @RequestParam("userId") Integer userId,
             @RequestParam("creationDate") String creationDate) {
 
@@ -65,14 +68,16 @@ public class FileService {
             try {
             	User user = new User();
             	user.setUserId(userId);
+            	user.setName("SISTEMA");
             	
             	Photo p = new Photo();
             	p.setBytes(file.getBytes());
-            	p.setName(name);
-            	p.setMime(mime);
+            	p.setName(file.getOriginalFilename());
+            	p.setMime(file.getContentType());
             	p.setCreated(new Date()); // TODO: Convert param to Date
+            	p.setInserted(new Date());
             	p.setUser(user);
-            	            	
+            	p.setMd5(PhotoHelper.generateMD5(file));
             	byte[] bytes = file.getBytes();
             	p.setBytes(bytes);
             	
@@ -82,12 +87,12 @@ public class FileService {
                 //BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(new File(name + "-uploaded")));
                 //stream.write(bytes);
                 //stream.close();
-                return "You successfully uploaded " + name + " into " + name + "-uploaded !";
+                return "You successfully uploaded " + file.getOriginalFilename() + " into " + file.getOriginalFilename() + "-uploaded !";
             } catch (Exception e) {
-                return "You failed to upload " + name + " => " + e.getMessage();
+                return "You failed to upload " + file.getOriginalFilename() + " => " + e.getMessage();
             }
         } else {
-            return "You failed to upload " + name + " because the file was empty.";
+            return "You failed to upload " + file.getOriginalFilename() + " because the file was empty.";
         }
     }	
 	
@@ -102,78 +107,66 @@ public class FileService {
 	public @ResponseBody List<User> getAllUsers() {
 		return userManagement.getAll();
 	}
+
+	@RequestMapping(value="/generateDevices", method=RequestMethod.GET)
+	public void generateDevices() {
+		try {
+			dM.populateDeviceTableFromPhotoRepository(PHOTO_REPOSITORY_PATH);
+		} catch (PhotoManagementDAOException e) {
+			logger.error("Exception on extracting devices from photo files", e);
+		}
+	}
 	
 //	@RequestMapping(value="/startFromDisk", method=RequestMethod.GET)
 //	public @ResponseBody List<Photo> startFromDisk() {
+//		List<Photo> existingPhotos = new ArrayList<Photo>();
+//		
 //		try {
-//			return aR.getPhotosFromDir("E:/Personal/Seguridad/Multimedia/Fotos", 0);
+//			existingPhotos =  photoManager.getPhotosFromDir(PHOTO_REPOSITORY_PATH);
 //		} catch (Exception e) {
-//			return null;
+//			logger.error(e);
 //		}
+//		
+//		return existingPhotos;
 //	}
 	
 	@RequestMapping(value="/startFromDisk", method=RequestMethod.GET)
 	public @ResponseBody List<Photo> startFromDisk() {
 		List<Photo> existingPhotos = new ArrayList<Photo>();
-		
+
 		try {			
-			
-			List<File> photos = FilesHelper.getFiles("E:/Personal/Seguridad/Multimedia/Fotos");
-			
+			List<File> photos = FilesHelper.getFiles(PHOTO_REPOSITORY_PATH);
+
 			logger.info("Found " + photos.size() + " photo(s)");
-			
+
 			Date now = new Date();
-			
+
 			byte[] data = null;
 			Date lastModified = null;
 			String generateMD5 = null;
-			
+
+			Map<String, Device> mapDevices = dM.getAllDevices();
+
 			User u = new User();
 			u.setUserId(0);
 			u.setName("SISTEMA");		
-			
-			for(File f : photos) { 
-				if (Files.probeContentType(f.toPath()).contains("image")) {
-					lastModified = new Date(f.lastModified());
-					generateMD5 = PhotoHelper.generateMD5(f);
 
-					Photo p = new Photo();
-					p.setUser(u);
-					p.setCreated(lastModified);
-					p.setCreated(lastModified);
-					p.setInserted(now);
-					p.setName(f.getName());
-					p.setPath(f.getAbsolutePath());
-					p.setMime("image/jpeg");
-					p.setMd5(generateMD5);
+			for(File f : photos) {
+				try {
+					Photo p = photoManager.insertDiskPhoto(f, data, lastModified, now, generateMD5, u, mapDevices);
 
-					//logger.info("Fichero [" + f.getAbsoluteFile().getAbsolutePath() + "] size[" +f.length() + "]");
-					data = FileUtils.readFileToByteArray(f);
-					p.setBytes(data);
-
-					Photo photo = aR.getPhotosFromDir(p, u);
-
-					if (photo != null) {
-						existingPhotos.add(photo);
-					} else {				
-						List<PhotoMetadata> metadata = mM.getPhotoFileMetadata(p, f);
-						mM.insertMetadata(metadata);
+					if ((p != null) && (p.getId().intValue() == IPhotoManagement.EXISTS)) {
+						existingPhotos.add(p);
 					}
-
-					data = null;
-					p.setBytes(null);
-					lastModified = null;
-					generateMD5 = null;
-					p = null;
-				} else {
-					logger.info("No es imagen [" + f.getAbsoluteFile().getAbsolutePath() + "]");
+				} catch (Exception e) {
+					logger.error("Ha ocurrido un error al procesar la foto[" + f.getAbsolutePath() + "]", e);
 				}
 			}
-			
-			return existingPhotos;		
-			
+
 		} catch (Exception e) {
-			return existingPhotos;
+			logger.error("Ha ocurrido una excepcion", e);
 		}
+
+		return existingPhotos;		
 	}	
 }

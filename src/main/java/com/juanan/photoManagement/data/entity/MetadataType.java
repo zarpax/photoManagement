@@ -25,7 +25,7 @@ public class MetadataType extends AbstractEntity<Integer> implements Serializabl
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@SequenceGenerator(name="METADATA_TYPE_METADATATYPEID_GENERATOR", sequenceName="SEQ_METADATA_TYPE")
+	@SequenceGenerator(name="METADATA_TYPE_METADATATYPEID_GENERATOR", sequenceName="SEQ_METADATA_TYPE", allocationSize=1)
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="METADATA_TYPE_METADATATYPEID_GENERATOR")
 	@Column(name="metadata_type_id", unique=true, nullable=false)
 	private Integer metadataTypeId;
