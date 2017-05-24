@@ -135,8 +135,15 @@ public class FileService {
 		List<Photo> existingPhotos = new ArrayList<Photo>();
 
 		try {			
+<<<<<<< HEAD
 			List<File> photos = FilesHelper.getFiles(PHOTO_REPOSITORY_PATH);
 
+=======
+			
+			List<File> photos = FilesHelper.getFiles("C:/Users/jles/Pictures");
+			//List<File> photos = FilesHelper.getFiles("E:/Personal/Seguridad/Multimedia/Fotos");
+			
+>>>>>>> branch 'master' of https://github.com/zarpax/photoManagement.git
 			logger.info("Found " + photos.size() + " photo(s)");
 
 			Date now = new Date();
@@ -150,21 +157,57 @@ public class FileService {
 			User u = new User();
 			u.setUserId(0);
 			u.setName("SISTEMA");		
+<<<<<<< HEAD
+=======
+			
+			for(File f : photos) { 
+				logger.info("Procesando fichero [" + f.getAbsoluteFile().getAbsolutePath() + "] size[" +f.length() + "]");
+				if ((Files.probeContentType(f.toPath()) != null) && (Files.probeContentType(f.toPath()).contains("image"))) {
+					lastModified = new Date(f.lastModified());
+					generateMD5 = PhotoHelper.generateMD5(f);
+>>>>>>> branch 'master' of https://github.com/zarpax/photoManagement.git
 
+<<<<<<< HEAD
 			for(File f : photos) {
 				try {
 					Photo p = photoManager.insertDiskPhoto(f, data, lastModified, now, generateMD5, u, mapDevices);
+=======
+					Photo p = new Photo();
+					p.setUser(u);
+					p.setCreated(lastModified);
+					p.setCreated(lastModified);
+					p.setInserted(now);
+					p.setName(f.getName());
+					p.setPath(f.getAbsolutePath());
+					p.setMime(Files.probeContentType(f.toPath()));
+					p.setMd5(generateMD5);
+>>>>>>> branch 'master' of https://github.com/zarpax/photoManagement.git
 
 					if ((p != null) && (p.getId().intValue() == IPhotoManagement.EXISTS)) {
 						existingPhotos.add(p);
 					}
+<<<<<<< HEAD
 				} catch (Exception e) {
 					logger.error("Ha ocurrido un error al procesar la foto[" + f.getAbsolutePath() + "]", e);
+=======
+
+					data = null;
+					p.setBytes(null);
+					lastModified = null;
+					generateMD5 = null;
+					p = null;
+				} else {
+					logger.info("No es imagen [" + f.getAbsoluteFile().getAbsolutePath() + "] " + Files.probeContentType(f.toPath()));
+>>>>>>> branch 'master' of https://github.com/zarpax/photoManagement.git
 				}
 			}
 
 		} catch (Exception e) {
 			logger.error("Ha ocurrido una excepcion", e);
+<<<<<<< HEAD
+=======
+			return existingPhotos;
+>>>>>>> branch 'master' of https://github.com/zarpax/photoManagement.git
 		}
 
 		return existingPhotos;		
