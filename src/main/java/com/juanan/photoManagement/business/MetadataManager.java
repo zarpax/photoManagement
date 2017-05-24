@@ -67,7 +67,6 @@ public class MetadataManager implements IMetadataManagement {
 				}
 
 				for (Tag tag : directory.getTags()) {
-<<<<<<< HEAD
 					if ((tag != null) && (tag.getTagName() != null) && (tag.getDescription() != null) && (tag.getTagName().trim().length() > 0) && (tag.getDescription().trim().length() > 0)) {
 						PhotoMetadata m = new PhotoMetadata();
 						m.setMetadataTypeBean(metadataType);
@@ -76,14 +75,6 @@ public class MetadataManager implements IMetadataManagement {
 						m.setPhoto(p);
 						list.add(m);
 					}
-=======
-					PhotoMetadata m = new PhotoMetadata();
-					m.setMetadataTypeBean(metadataType);
-					m.setName(tag.getTagName().replaceAll("[^\\x00-\\x7F]", "").trim());
-					m.setValue(tag.getDescription().replaceAll("[^\\x00-\\x7F]", "").trim());
-					m.setPhoto(p);
-					list.add(m);
->>>>>>> branch 'master' of https://github.com/zarpax/photoManagement.git
 				}
 
 				if (directory.hasErrors()) {
