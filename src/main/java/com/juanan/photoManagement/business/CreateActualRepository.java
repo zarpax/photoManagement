@@ -1,11 +1,5 @@
 package com.juanan.photoManagement.business;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.juanan.photoManagement.data.entity.Photo;
-import com.juanan.photoManagement.data.entity.PhotoMetadata;
 import com.juanan.photoManagement.data.entity.User;
 
 @Service
