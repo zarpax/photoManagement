@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +23,8 @@ import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.Tag;
 import com.drew.metadata.exif.ExifIFD0Directory;
+import com.drew.metadata.exif.ExifSubIFDDirectory;
+import com.drew.metadata.file.FileMetadataDirectory;
 import com.juanan.photoManagement.data.dao.MetadataTypeDao;
 import com.juanan.photoManagement.data.dao.PhotoMetadataDao;
 import com.juanan.photoManagement.data.entity.Device;
@@ -153,7 +157,29 @@ public class MetadataManager implements IMetadataManagement {
 		
 		return new ArrayList<Device>(mapDevices.values());
 	}
-	
-	
 
+	@Override
+	public Date getCreationDate(File photoFile) throws ImageProcessingException, IOException, ParseException {
+		Date creationDate = null;
+		Metadata metadata = ImageMetadataReader.readMetadata(photoFile);
+		ExifSubIFDDirectory directory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
+		
+		if (directory != null) {
+			if (directory.getDate(ExifSubIFDDirectory.TAG_DATETIME) != null) {
+				creationDate = directory.getDate(ExifSubIFDDirectory.TAG_DATETIME);
+			}
+		}
+		
+		if (creationDate == null) {
+			FileMetadataDirectory fM = metadata.getFirstDirectoryOfType(FileMetadataDirectory.class);
+			
+			if (fM != null) {
+				if (fM.getDate(FileMetadataDirectory.TAG_FILE_MODIFIED_DATE) != null) {
+					creationDate = fM.getDate(FileMetadataDirectory.TAG_FILE_MODIFIED_DATE);
+				}
+			}
+		}
+		
+		return creationDate;
+	}
 }

@@ -81,7 +81,7 @@ public class PhotoManager implements IPhotoManagement {
 		
 		String photoMd5 = photo.getMd5();
 		
-		logger.info("Buscando si existe MD5[" + photoMd5 + "] para la foto [" + photo.getPath() + "__" + photo.getName() + "]");
+		//logger.info("Buscando si existe MD5[" + photoMd5 + "] para la foto [" + photo.getPath() + "__" + photo.getName() + "]");
 		
 		if (photoDao.selectByMD5(photoMd5) != null) {
 			exists = true;
@@ -127,8 +127,7 @@ public class PhotoManager implements IPhotoManagement {
 
 			Photo p = new Photo();
 			p.setUser(u);
-			p.setCreated(lastModified);
-			p.setCreated(lastModified);
+			p.setCreated(mM.getCreationDate(f));
 			p.setInserted(now);
 			p.setName(f.getName());
 			p.setPath(f.getAbsolutePath());

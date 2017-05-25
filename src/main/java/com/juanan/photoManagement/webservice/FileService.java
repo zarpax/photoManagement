@@ -134,6 +134,9 @@ public class FileService {
 	public @ResponseBody List<Photo> startFromDisk() {
 		List<Photo> existingPhotos = new ArrayList<Photo>();
 
+		int errores = 0;
+		int procesadas = 0;
+		
 		try {			
 			List<File> photos = FilesHelper.getFiles(PHOTO_REPOSITORY_PATH);
 
@@ -150,7 +153,7 @@ public class FileService {
 			User u = new User();
 			u.setUserId(0);
 			u.setName("SISTEMA");		
-
+			
 			for(File f : photos) {
 				try {
 					Photo p = photoManager.insertDiskPhoto(f, data, lastModified, now, generateMD5, u, mapDevices);
@@ -159,12 +162,16 @@ public class FileService {
 						existingPhotos.add(p);
 					}
 				} catch (Exception e) {
-					logger.error("Ha ocurrido un error al procesar la foto[" + f.getAbsolutePath() + "]", e);
+					logger.error("[ERROR] Ha ocurrido un error al procesar la foto[" + f.getAbsolutePath() + "] " + e.getMessage());
+					errores++;
 				}
+				procesadas++;
+				
+				logger.info(String.format("Fotos procesadas [%d] errores[%d] duplicadas[%d]", procesadas, errores, existingPhotos.size()));
 			}
 
 		} catch (Exception e) {
-			logger.error("Ha ocurrido una excepcion", e);
+			logger.error("Ha ocurrido una excepcion al subir las fotos", e);
 		}
 
 		return existingPhotos;		
