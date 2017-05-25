@@ -13,6 +13,7 @@ import java.nio.channels.FileChannel;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -36,10 +37,12 @@ public class FilesHelper {
 	private static final String PARAM_CREATED_DATETIME = "#{CDT}";
 	private static final String PARAM_USER = "#{US}";
 	private static final String PARAM_FILENAME = "#{FI}";
+	private static final String PARAM_CREATED_DATE_YEAR = "#{CDY}";
+	private static final String PARAM_CREATED_DATE_MONTH = "#{CDM}";
 	
 	private static final String PHOTO_BASE_PATH = "D:/PhotoRepository";
 	
-	private static final String PHOTO_PATH = PHOTO_BASE_PATH + "/" + PARAM_CREATED_DATE + "/";
+	private static final String PHOTO_PATH = PHOTO_BASE_PATH + "/" + PARAM_CREATED_DATE_YEAR + "/" + PARAM_CREATED_DATE_MONTH + "/";
 	private static final String FILENAME_FORMAT = PARAM_CREATED_DATETIME + "_" + PARAM_USER + "_" + PARAM_FILENAME;
 	
 	private static final DateFormat dateFormat = new SimpleDateFormat(FORMAT_DATE);
@@ -95,7 +98,12 @@ public class FilesHelper {
 		}	
 	
 	public static String getFilePathForPhoto(Photo p, User u) {
-		String path = PHOTO_PATH.replace(PARAM_CREATED_DATE, dateFormat.format(p.getCreated()));
+		Calendar c = Calendar.getInstance();
+		c.setTime(p.getCreated());
+		String month = String.format("%02d", (c.get(Calendar.MONTH) + 1));
+		String year = String.valueOf(c.get(Calendar.YEAR));
+		
+		String path = PHOTO_PATH.replace(PARAM_CREATED_DATE_YEAR, year).replace(PARAM_CREATED_DATE_MONTH, month);
 		
 		return path;
 	}
