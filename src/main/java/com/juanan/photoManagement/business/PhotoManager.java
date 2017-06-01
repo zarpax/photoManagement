@@ -50,12 +50,11 @@ public class PhotoManager implements IPhotoManagement {
 				
 				Photo inserted = photoDao.insert(photo);
 				
-				
-				
 				if ((inserted == null) || (inserted.getId() == null)) {
 					result = IPhotoManagement.ERROR;
 				} else {
 					FilesHelper.writeFile(photo.getBytes(), photo.getPath() + photo.getName());
+					FilesHelper.writeThumbs(photo, user);
 				}
 				
 			} else {
@@ -199,6 +198,39 @@ public class PhotoManager implements IPhotoManagement {
 			logger.error("Ha ocurrido una excepcion", e);
 			throw new Exception(e.getMessage());// TODO: Create a specific exception for this
 		}
+	}
+
+
+	@Override
+	public Photo getPhotoById(Photo photo) {
+		Photo p = null;
+		
+		try {
+			p = photoDao.select(photo.getId());
+			
+			p.setBytes(FilesHelper.getBytesFromPhoto(p, p.getUser()));
+		} catch (Exception e) {
+			logger.error("Exception when getting photo", e);
+		}
+		
+		return p;
+	}
+
+
+	@Override
+	public List<Photo> get100RecentThumbs() { // TODO: Delete ASAP. Is for testing front
+		List<Photo> photos = new ArrayList<Photo>();
+		
+		try {
+			photos = photoDao.selectLastest100Photos();
+			for (Photo p : photos) {
+				p.setBytes(FilesHelper.getBytesFromThumb(p, p.getUser()));
+			}
+		} catch (Exception e) {
+			logger.error("Exception when getting photos from bbdd", e);
+		}
+		
+		return photos;
 	}
 
 }

@@ -1,6 +1,7 @@
 package com.juanan.photoManagement.data.dao;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -36,6 +37,17 @@ public class PhotoDao extends AbstractDAO<Photo, BigDecimal> {
 		List<Photo> photos = null;
 
 		//TODO: Pending
+		
+		return photos;
+	}
+	
+	// TODO: Delete ASAP. Is only for testing front
+	public List<Photo> selectLastest100Photos() {
+		List<Photo> photos = new ArrayList<Photo>();
+	
+		TypedQuery<Photo> q = getEntityManager().createQuery("select p from Photo p order by p.created desc", Photo.class);
+
+		photos = q.setMaxResults(100).getResultList();
 		
 		return photos;
 	}

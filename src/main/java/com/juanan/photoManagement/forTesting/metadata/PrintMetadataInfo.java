@@ -78,7 +78,8 @@ public class PrintMetadataInfo {
 	}
 
 	public static void main(String... argv) {
-		List<File> photos = FilesHelper.getFiles("E:/Personal/Seguridad/Multimedia/Fotos");
+		List<File> photos = FilesHelper.getFiles("D:/PhotoRepository/2015/08/a");
+//		List<File> photos = FilesHelper.getFiles("E:/Personal/Seguridad/Multimedia/Fotos");
 //		List<File> photos = FilesHelper.getFiles("C:/Users/jles/Pictures");
 
 		Map<String, String> devices = new HashMap<String, String>();
@@ -86,11 +87,11 @@ public class PrintMetadataInfo {
 		for(File f : photos) {
 			try {
 				Metadata metadata = ImageMetadataReader.readMetadata(f);				
-//				PrintMetadataInfo.print(f.getAbsolutePath().toString(), metadata);				
+				PrintMetadataInfo.print(f.getAbsolutePath().toString(), metadata);				
 				String device = PrintMetadataInfo.getDevice(metadata);
 				
 				if ((!device.isEmpty()) && (!devices.containsKey(device))) {
-					logger.info("Dispisitivo nuevo [" + device + "]");
+					logger.info("Dispositivo nuevo [" + device + "]");
 					devices.put(device, device);
 				}
 								

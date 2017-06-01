@@ -27,5 +27,8 @@ public interface IPhotoManagement {
 	public int insert(Photo photo, User user) throws Exception; 
 	public Photo insertDiskPhoto(File f, byte[] data, Date lastModified, Date now, String generateMD5, User u, Map<String, Device> mapDevices) throws Exception;
 	public List<Photo> getPhotosFromDir(String photoRepositoryPath)  throws Exception ;		
-	public List<Photo> getPhotosFromLastSync(Date lastSync);		
+	public List<Photo> getPhotosFromLastSync(Date lastSync);
+	public Photo getPhotoById(Photo photo);
+	public List<Photo> get100RecentThumbs(); // TODO: Delete is only for testing front
+	
 }

@@ -165,8 +165,8 @@ public class MetadataManager implements IMetadataManagement {
 		ExifSubIFDDirectory directory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
 		
 		if (directory != null) {
-			if (directory.getDate(ExifSubIFDDirectory.TAG_DATETIME) != null) {
-				creationDate = directory.getDate(ExifSubIFDDirectory.TAG_DATETIME);
+			if (directory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL) != null) {
+				creationDate = directory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
 			}
 		}
 		

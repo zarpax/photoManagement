@@ -58,6 +58,23 @@ public class UserManager implements IUserManagement {
 		
 		return users;
 	}
+
+	@Override
+	public boolean existsUser(String name, String password) {
+		boolean exists = false;
+		
+		try {
+			User user = userDao.selectByNameAndPassword(name, password);
+			
+			if (user != null) {
+				exists = true;
+			}
+		} catch (Exception e) {
+			logger.error("Exception when finding user by name[" + name + "] password[" + password + "]", e);
+		}
+		
+		return exists;
+	}
 	
 	
 

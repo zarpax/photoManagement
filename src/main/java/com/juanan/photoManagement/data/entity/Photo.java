@@ -18,6 +18,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 /**
  * The persistent class for the photo database table.
@@ -44,6 +46,7 @@ public class Photo extends AbstractEntity<BigDecimal> implements Serializable {
 	private Date inserted;
 
 	@Column(nullable=false)
+	@JsonIgnore
 	private String md5;
 
 	@Column(nullable=false, length=12)
@@ -53,11 +56,13 @@ public class Photo extends AbstractEntity<BigDecimal> implements Serializable {
 	private String name;
 
 	@Column(nullable=false, length=255)
+	@JsonIgnore
 	private String path;
 
 	//@Column(name="person_id", nullable=false)
 	@ManyToOne
 	@JoinColumn(name="person_id", nullable=false)	
+	@JsonIgnore
 	private User user;
 	
 	@Transient

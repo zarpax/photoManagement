@@ -9,6 +9,11 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -107,6 +112,56 @@ public class FileService {
 	public @ResponseBody List<User> getAllUsers() {
 		return userManagement.getAll();
 	}
+	
+	@RequestMapping(value="/login", method=RequestMethod.POST)
+	public ResponseEntity<Boolean> login(@RequestBody User userLogin) {
+		Boolean status = Boolean.FALSE;
+		final HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		
+		try {
+			boolean exists = userManagement.existsUser(userLogin.getName(), userLogin.getPassword());
+			
+			if (exists) {
+				status = Boolean.TRUE;
+			}
+		} catch (Exception e) {
+			logger.error("Exception when login", e);
+		}
+		
+		return new ResponseEntity<Boolean>(status, headers, HttpStatus.OK);
+	}	
+	
+	@RequestMapping(value="/getPhoto", method=RequestMethod.POST)
+	public ResponseEntity<Photo> getPhoto(@RequestBody Photo photo) {
+		Photo p = null;
+	    final HttpHeaders headers = new HttpHeaders();
+	    
+		try {
+			logger.debug("Solicitando foto con id[" + photo.getId().intValue() + "]");
+			p = photoManager.getPhotoById(photo);
+			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		} catch (Exception e) {
+			logger.error("Exception when login", e);
+		}
+		
+		return new ResponseEntity<Photo>(p, headers, HttpStatus.CREATED);
+	}	
+	
+	@RequestMapping(value="/getLast100Thumbs", method=RequestMethod.POST)
+	public ResponseEntity<List<Photo>> getLast100Photos() {
+		List<Photo> photos = null;
+	    final HttpHeaders headers = new HttpHeaders();
+	    
+		try {
+			photos = photoManager.get100RecentThumbs();
+			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		} catch (Exception e) {
+			logger.error("Exception when login", e);
+		}
+		
+		return new ResponseEntity<List<Photo>>(photos, headers, HttpStatus.CREATED);
+	}		
 
 	@RequestMapping(value="/generateDevices", method=RequestMethod.GET)
 	public void generateDevices() {
@@ -133,7 +188,8 @@ public class FileService {
 	@RequestMapping(value="/startFromDisk", method=RequestMethod.GET)
 	public @ResponseBody List<Photo> startFromDisk() {
 		List<Photo> existingPhotos = new ArrayList<Photo>();
-
+		List<File> erroresFicheros = new ArrayList<File>();
+		
 		int errores = 0;
 		int procesadas = 0;
 		
@@ -164,15 +220,20 @@ public class FileService {
 				} catch (Exception e) {
 					logger.error("[ERROR] Ha ocurrido un error al procesar la foto[" + f.getAbsolutePath() + "] " + e.getMessage());
 					errores++;
+					erroresFicheros.add(f);
 				}
 				procesadas++;
 				
-				logger.info(String.format("Fotos procesadas [%d] errores[%d] duplicadas[%d]", procesadas, errores, existingPhotos.size()));
+				if (procesadas%200 == 0) {
+					logger.info(String.format("Fotos procesadas [%d] errores[%d] duplicadas[%d]", procesadas, errores, existingPhotos.size()));
+				}
 			}
 
 		} catch (Exception e) {
 			logger.error("Ha ocurrido una excepcion al subir las fotos", e);
 		}
+		
+		
 
 		return existingPhotos;		
 	}	

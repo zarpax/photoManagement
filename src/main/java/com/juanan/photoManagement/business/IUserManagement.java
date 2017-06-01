@@ -10,5 +10,5 @@ public interface IUserManagement {
 	public User getUser(Integer userId);
 	
 	public List<User> getAll();
-	
+	public boolean existsUser(String name, String password);
 }
