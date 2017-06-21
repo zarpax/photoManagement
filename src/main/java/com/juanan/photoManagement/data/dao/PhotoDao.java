@@ -42,14 +42,25 @@ public class PhotoDao extends AbstractDAO<Photo, BigDecimal> {
 	}
 	
 	// TODO: Delete ASAP. Is only for testing front
-	public List<Photo> selectLastest100Photos() {
+	public List<Photo> selectLastestPhotos(int limit) {
 		List<Photo> photos = new ArrayList<Photo>();
 	
 		TypedQuery<Photo> q = getEntityManager().createQuery("select p from Photo p order by p.created desc", Photo.class);
 
-		photos = q.setMaxResults(100).getResultList();
+		photos = q.setMaxResults(limit).getResultList();
 		
 		return photos;
+	}
+	
+	// TODO: Delete ASAP. Is only for testing front
+	public List<Photo> selectRandomPhotos(int limit) {
+		List<Photo> photos = new ArrayList<Photo>();
+		
+		TypedQuery<Photo> q = getEntityManager().createQuery("select p from Photo p order by random()", Photo.class);
+
+		photos = q.setMaxResults(limit).getResultList();
+		
+		return photos;		
 	}
 
 }

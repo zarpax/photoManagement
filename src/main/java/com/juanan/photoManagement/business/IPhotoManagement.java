@@ -29,6 +29,9 @@ public interface IPhotoManagement {
 	public List<Photo> getPhotosFromDir(String photoRepositoryPath)  throws Exception ;		
 	public List<Photo> getPhotosFromLastSync(Date lastSync);
 	public Photo getPhotoById(Photo photo);
-	public List<Photo> get100RecentThumbs(); // TODO: Delete is only for testing front
+	public Photo getPhotoByIdWithoutFile(Photo photo);
+	public Photo getPhotoById(Photo photo, int width, int height);
+	public List<Photo> getRecentThumbs(int number); // TODO: Delete is only for testing front
+	public List<Photo> getRandomPhotos(int number); // TODO: Delete is only for testing front
 	
 }

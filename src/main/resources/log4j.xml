@@ -10,6 +10,17 @@
 			<param name="ConversionPattern" value="%-5p: %c - %m%n" />
 		</layout>
 	</appender>
+	
+	<appender name="file" class="org.apache.log4j.RollingFileAppender">
+	   <param name="append" value="false" />
+	   <param name="maxFileSize" value="15MB" />
+	   <param name="maxBackupIndex" value="5" />
+	   <param name="file" value="./server.log" />
+	   <layout class="org.apache.log4j.PatternLayout">
+		<param name="ConversionPattern"
+			value="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n" />
+	   </layout>
+	</appender>	
 
 	<!-- 3rdparty Loggers -->
 	<logger name="cyii.mc3">
@@ -35,6 +46,7 @@
 	<root>
 		<priority value="info" />
 		<appender-ref ref="console" />
+		<appender-ref ref="file" />
 	</root>
 
 </log4j:configuration>

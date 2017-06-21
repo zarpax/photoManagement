@@ -37,7 +37,7 @@ public abstract class AbstractDAO<T extends AbstractEntity<TID>, TID> {
 	
 	private final static String WHERE = "WHERE";
 	
-	@PersistenceContext(unitName = "back")
+	@PersistenceContext
 	protected EntityManager em;
 
 	protected AbstractDAO(Class<T> clazz) {

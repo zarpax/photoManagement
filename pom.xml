@@ -18,14 +18,13 @@
 		<org.slf4j.version>1.7.7</org.slf4j.version>
 		<hibernate.version>4.2.9.Final</hibernate.version>
 		<json.fasterxml.version>2.8.7</json.fasterxml.version>
-		<!-- <skipTests>true</skipTests>  -->
-		<snippetsDirectory>${project.build.directory}/generated-snippets</snippetsDirectory>
+		<skipTests>true</skipTests>
 	</properties>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.5.2.RELEASE</version>
+        <version>1.5.3.RELEASE</version>
     </parent>
     
  
@@ -80,90 +79,6 @@
             <scope>test</scope>
         </dependency>	
 	
-		<!--  Spring DOC -->
-	    <dependency>
-	        <groupId>org.springframework.restdocs</groupId>
-	        <artifactId>spring-restdocs-mockmvc</artifactId>
-	        <version>1.2.0.RELEASE</version>
-	    </dependency>
-
-		<!-- Spring Core -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
-			<version>${spring.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>${spring.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-orm</artifactId>
-			<version>${spring.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context-support</artifactId>
-			<version>${spring.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-webmvc</artifactId>
-			<version>${spring.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-web</artifactId>
-			<version>${spring.version}</version>
-			<scope>compile</scope>
-		</dependency>
-
-		<!-- Security -->
-<!-- 		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-core</artifactId>
-			<version>${org.springframework.security.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-taglibs</artifactId>
-			<version>${org.springframework.security.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-config</artifactId>
-			<version>${org.springframework.security.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-web</artifactId>
-			<version>${org.springframework.security.version}</version>
-			<scope>compile</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-ldap</artifactId>
-			<version>${org.springframework.security.version}</version>
-			<scope>compile</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-cas</artifactId>
-			<version>${org.springframework.security.version}</version>
-			<scope>compile</scope>
-		</dependency> -->
 
 		<!-- Para el cliente de pruebas  -->
 		<dependency>
@@ -182,44 +97,6 @@
 			<groupId>javax.ws.rs</groupId>
 			<artifactId>javax.ws.rs-api</artifactId>
 			<version>2.0</version>
-		</dependency>
-
-		<!-- JPA -->
-		<dependency>
-			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-jpa</artifactId>
-			<version>1.6.4.RELEASE</version>
-			<scope>compile</scope>
-		</dependency>
-
-		<!-- Hibernate -->
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-			<version>${hibernate.version}</version>
-			<scope>compile</scope>
-		</dependency>
-
-
-
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
-			<version>${hibernate.version}</version>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>jboss-logging</artifactId>
-					<groupId>org.jboss.logging</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-ehcache</artifactId>
-			<version>${hibernate.version}</version>
-			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
@@ -258,41 +135,6 @@
 			<scope>compile</scope>
 		</dependency>
 
-		<!-- Servlet -->
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.5</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet.jsp</groupId>
-			<artifactId>jsp-api</artifactId>
-			<version>2.1</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>jstl</artifactId>
-			<version>1.2</version>
-			<scope>compile</scope>
-		</dependency>
-
-
-		<!-- Test -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<version>${spring.version}</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
-			<scope>test</scope>
-		</dependency>
 
 	</dependencies>
 
@@ -313,7 +155,7 @@
 	  </repositories>
 
 	<build>
-		<finalName>mc3</finalName>
+		<finalName>server</finalName>
 		<resources>
 			<resource>
 				<directory>src/main/java</directory>
@@ -334,55 +176,41 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>1.5.3.RELEASE</version>
+                <configuration>
+        			<executable>true</executable>
+        			<addResources>true</addResources>
+    			</configuration>
+		      <executions>
+		        <execution>
+		          <goals>
+		            <goal>repackage</goal>
+		          </goals>
+		        </execution>
+		      </executions>    			
             </plugin>		
-			<plugin>
+  			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
 				<configuration>
 					<source>${jdk.version}</source>
 					<target>${jdk.version}</target>
 				</configuration>
-			</plugin>
-			<plugin>
+			</plugin> 
+ 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>2.1</version>
 				<configuration>
 				</configuration>
 			</plugin>
-			<!-- Pluggin for doc generation -->
-			<plugin>
-            <groupId>org.asciidoctor</groupId>
-		        <artifactId>asciidoctor-maven-plugin</artifactId>
-		        <version>1.5.2</version>
-		        <executions>
-		            <execution>
-		                <id>generate-docs</id>
-		                <phase>prepare-package</phase>
-		                <goals>
-		                    <goal>process-asciidoc</goal>
-		                </goals>
-		                <configuration>
-		                    <backend>html</backend>
-		                    <doctype>book</doctype>
-		                    <attributes>
-		                        <snippets>${project.build.directory}/generated-snippets</snippets>
-		                    </attributes>
-		                    <sourceDirectory>src/docs/asciidocs</sourceDirectory>
-		                    <outputDirectory>target/generated-docs</outputDirectory>
-		                    </configuration>
-		            </execution>
-		        </executions>
-        	</plugin>
-
-	      <plugin>
+	      <!-- <plugin>
 	        <groupId>org.apache.maven.plugins</groupId>
 	        <artifactId>maven-surefire-plugin</artifactId>
 	        <version>2.20</version>
 	        <configuration>
 	        </configuration>
-	      </plugin>
-	      
+	      </plugin> -->
 		</plugins>
 	</build>
 

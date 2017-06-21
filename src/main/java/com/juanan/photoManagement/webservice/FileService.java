@@ -1,11 +1,17 @@
 package com.juanan.photoManagement.webservice;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,27 +19,28 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.juanan.photoManagement.business.CreateActualRepository;
-import com.juanan.photoManagement.business.DeviceManager;
 import com.juanan.photoManagement.business.FilesHelper;
+import com.juanan.photoManagement.business.IDeviceManagement;
 import com.juanan.photoManagement.business.IPhotoManagement;
+import com.juanan.photoManagement.business.IUserManagement;
 import com.juanan.photoManagement.business.PhotoHelper;
-import com.juanan.photoManagement.business.PhotoManager;
-import com.juanan.photoManagement.business.UserManager;
 import com.juanan.photoManagement.data.entity.Device;
 import com.juanan.photoManagement.data.entity.Photo;
 import com.juanan.photoManagement.data.entity.User;
 import com.juanan.photoManagement.data.exception.PhotoManagementDAOException;
+import com.juanan.photoManagement.webservice.dto.PhotoDTO;
 
-@RestController
+@Controller
 @RequestMapping("/fileService")
 public class FileService {
 	
@@ -42,16 +49,13 @@ public class FileService {
 	private final String PHOTO_REPOSITORY_PATH = "E:/Personal/Seguridad/Multimedia/Fotos";// "C:/Users/jles/Pictures"
 	
 	@Autowired
-	private UserManager userManagement;
+	private IUserManagement userManagement;
 	
 	@Autowired
-	private PhotoManager photoManager;
+	private IPhotoManagement photoManager;
 	
 	@Autowired
-	private CreateActualRepository aR;
-	
-	@Autowired
-	private DeviceManager dM;	
+	private IDeviceManagement dM;	
 	
 	
 	
@@ -132,14 +136,17 @@ public class FileService {
 		return new ResponseEntity<Boolean>(status, headers, HttpStatus.OK);
 	}	
 	
+	@CrossOrigin(origins = "*")
 	@RequestMapping(value="/getPhoto", method=RequestMethod.POST)
-	public ResponseEntity<Photo> getPhoto(@RequestBody Photo photo) {
+	public ResponseEntity<Photo> getPhoto(@RequestBody PhotoDTO photo) {
 		Photo p = null;
 	    final HttpHeaders headers = new HttpHeaders();
 	    
 		try {
-			logger.debug("Solicitando foto con id[" + photo.getId().intValue() + "]");
-			p = photoManager.getPhotoById(photo);
+			logger.debug("Solicitando foto con id[" + photo.getPhotoId() + "]");
+			Photo photoParam = new Photo();
+			photoParam.setPhotoId(new BigDecimal(photo.getPhotoId()));
+			p = photoManager.getPhotoById(photoParam, photo.getWidth(), photo.getHeigth());
 			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 		} catch (Exception e) {
 			logger.error("Exception when login", e);
@@ -148,13 +155,113 @@ public class FileService {
 		return new ResponseEntity<Photo>(p, headers, HttpStatus.CREATED);
 	}	
 	
-	@RequestMapping(value="/getLast100Thumbs", method=RequestMethod.POST)
-	public ResponseEntity<List<Photo>> getLast100Photos() {
+	private void sendPhoto(Long photoId, int width, int height, HttpServletResponse response) {
+		Photo p = null;
+	    
+		try {
+			logger.debug("Solicitando foto con id[" + photoId + "]");
+			Photo photoParam = new Photo();
+			photoParam.setPhotoId(new BigDecimal(photoId));
+			p = photoManager.getPhotoByIdWithoutFile(photoParam);
+			File f = new File(FilesHelper.getFilePathForPhoto(p, p.getUser()) + "/" + p.getName());
+			InputStream iS = new FileInputStream(f);
+			response.addHeader("Content-disposition", "attachment;filename=" + p.getName());
+			response.setContentType(p.getMime());
+			response.setContentLength((int)f.length());
+			IOUtils.copy(iS, response.getOutputStream());
+			response.flushBuffer();
+		} catch (Exception e) {
+			logger.error("Exception when login", e);
+		}		
+	}
+	
+	@CrossOrigin(origins = "*")
+	@RequestMapping(value="/getPhoto/{photoId}", method=RequestMethod.GET)
+	public void getPhoto(@PathVariable Long photoId, HttpServletResponse response) {
+		sendPhoto(photoId, 0, 0, response);
+	}
+	
+	@CrossOrigin(origins = "*")
+	@RequestMapping(value="/getPhoto/{photoId}/{width}/{height}", method=RequestMethod.GET)
+	public void getPhoto(@PathVariable Long photoId, @PathVariable Integer width, @PathVariable Integer heigth, HttpServletResponse response) {
+		sendPhoto(photoId, width, heigth, response);
+	}	
+	
+	@CrossOrigin(origins = "*")
+	@RequestMapping(value="/getThumb", method=RequestMethod.POST)
+	public ResponseEntity<Photo> getThumb(@RequestBody PhotoDTO photo) {
+		Photo p = null;
+	    final HttpHeaders headers = new HttpHeaders();
+	    
+		try {
+			logger.debug("Solicitando foto con id[" + photo.getPhotoId() + "]");
+			Photo photoParam = new Photo();
+			photoParam.setPhotoId(new BigDecimal(photo.getPhotoId()));
+			p = photoManager.getPhotoById(photoParam, photo.getWidth(), photo.getHeigth());
+			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		} catch (Exception e) {
+			logger.error("Exception when login", e);
+		}
+		
+		return new ResponseEntity<Photo>(p, headers, HttpStatus.CREATED);
+	}
+
+	@CrossOrigin(origins = "*")
+	@RequestMapping(value="/downloadThumb", method=RequestMethod.POST)
+	public void downloadThumb(@RequestBody PhotoDTO photo, HttpServletResponse response) {
+		Photo p = null;
+	    
+		try {
+			logger.debug("Solicitando foto con id[" + photo.getPhotoId() + "]");
+			Photo photoParam = new Photo();
+			photoParam.setPhotoId(new BigDecimal(photo.getPhotoId()));
+			p = photoManager.getPhotoByIdWithoutFile(photoParam);
+		
+			File f = new File(FilesHelper.getFilePathForThumb(p, p.getUser()) + "/" + p.getName());
+			InputStream iS = new FileInputStream(f);
+			response.addHeader("Content-disposition", "attachment;filename=" + p.getName());
+			response.setContentType(p.getMime());
+			response.setContentLength((int)f.length());
+			IOUtils.copy(iS, response.getOutputStream());
+			response.flushBuffer();
+		} catch (Exception e) {
+			logger.error("Exception when login", e);
+		}
+	}	
+	
+
+	@CrossOrigin(origins = "*")
+	@RequestMapping(value="/getThumb/{photoId}", method=RequestMethod.GET)
+	public void downloadThumbGet(@PathVariable Long photoId, HttpServletResponse response) {
+		Photo p = null;
+	    
+		try {
+			logger.debug("Solicitando foto con id[" + photoId + "]");
+			Photo photoParam = new Photo();
+			photoParam.setPhotoId(new BigDecimal(photoId));
+			p = photoManager.getPhotoByIdWithoutFile(photoParam);
+		
+			File f = new File(FilesHelper.getFilePathForThumb(p, p.getUser()) + "/" + p.getName());
+			InputStream iS = new FileInputStream(f);
+			response.addHeader("Content-disposition", "attachment;filename=" + p.getName());
+			response.setContentType(p.getMime());
+			response.setContentLength((int)f.length());
+			IOUtils.copy(iS, response.getOutputStream());
+			response.flushBuffer();
+		} catch (Exception e) {
+			logger.error("Exception when login", e);
+		}
+	}	
+	
+	
+	@CrossOrigin(origins = "*")
+	@RequestMapping(value="/getThumbs", method=RequestMethod.POST)
+	public ResponseEntity<List<Photo>> getThumbs() {
 		List<Photo> photos = null;
 	    final HttpHeaders headers = new HttpHeaders();
 	    
 		try {
-			photos = photoManager.get100RecentThumbs();
+			photos = photoManager.getRandomPhotos(25);
 			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 		} catch (Exception e) {
 			logger.error("Exception when login", e);
@@ -171,19 +278,6 @@ public class FileService {
 			logger.error("Exception on extracting devices from photo files", e);
 		}
 	}
-	
-//	@RequestMapping(value="/startFromDisk", method=RequestMethod.GET)
-//	public @ResponseBody List<Photo> startFromDisk() {
-//		List<Photo> existingPhotos = new ArrayList<Photo>();
-//		
-//		try {
-//			existingPhotos =  photoManager.getPhotosFromDir(PHOTO_REPOSITORY_PATH);
-//		} catch (Exception e) {
-//			logger.error(e);
-//		}
-//		
-//		return existingPhotos;
-//	}
 	
 	@RequestMapping(value="/startFromDisk", method=RequestMethod.GET)
 	public @ResponseBody List<Photo> startFromDisk() {

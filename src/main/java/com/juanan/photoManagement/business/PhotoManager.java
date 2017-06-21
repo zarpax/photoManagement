@@ -34,10 +34,10 @@ public class PhotoManager implements IPhotoManagement {
 	private PhotoDao photoDao;
 	
 	@Autowired
-	private MetadataManager mM;	
+	private IMetadataManagement mM;	
 	
 	@Autowired
-	private DeviceManager dM;
+	private IDeviceManagement dM;
 	
 	@Override
 	public int insert(Photo photo, User user) throws Exception {
@@ -218,11 +218,11 @@ public class PhotoManager implements IPhotoManagement {
 
 
 	@Override
-	public List<Photo> get100RecentThumbs() { // TODO: Delete ASAP. Is for testing front
+	public List<Photo> getRecentThumbs(int number) { // TODO: Delete ASAP. Is for testing front
 		List<Photo> photos = new ArrayList<Photo>();
 		
 		try {
-			photos = photoDao.selectLastest100Photos();
+			photos = photoDao.selectLastestPhotos(number);
 			for (Photo p : photos) {
 				p.setBytes(FilesHelper.getBytesFromThumb(p, p.getUser()));
 			}
@@ -232,5 +232,57 @@ public class PhotoManager implements IPhotoManagement {
 		
 		return photos;
 	}
+
+
+	@Override
+	public Photo getPhotoById(Photo photo, int width, int height) {
+		Photo p = null;
+		
+		try {
+			p = photoDao.select(photo.getId());
+			
+			p.setBytes(FilesHelper.getBytesFromResizedPhoto(p, p.getUser(), width, height));
+		} catch (Exception e) {
+			logger.error("Exception when getting photo", e);
+		}
+		
+		return p;
+	}
+
+	@Override
+	public Photo getPhotoByIdWithoutFile(Photo photo) {
+		Photo p = null;
+		
+		try {
+			p = photoDao.select(photo.getId());			
+		} catch (Exception e) {
+			logger.error("Exception when getting photo", e);
+		}
+		
+		return p;
+	}	
+	
+	private void getResizedPhotoForDevice(Photo photo, Integer width, Integer heigth) {
+		
+	}
+
+
+	@Override
+	public List<Photo> getRandomPhotos(int number) {// TODO: Delete ASAP. Is for testing front
+		List<Photo> photos = new ArrayList<Photo>();
+		
+		try {
+			photos = photoDao.selectRandomPhotos(number);
+//			for (Photo p : photos) {
+//				p.setBytes(FilesHelper.getBytesFromResizedPhoto(p, p.getUser(), 150, 150));
+//			}
+		} catch (Exception e) {
+			logger.error("Exception when getting photos from bbdd", e);
+		}
+		
+		return photos;
+	}
+
+
 
 }

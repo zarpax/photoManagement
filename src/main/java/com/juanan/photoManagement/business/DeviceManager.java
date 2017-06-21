@@ -17,7 +17,7 @@ import com.juanan.photoManagement.data.exception.PhotoManagementDAOException;
 public class DeviceManager implements IDeviceManagement {
 
 	@Autowired
-	private MetadataManager mM;
+	private IMetadataManagement mM;
 	
 	@Autowired
 	private DeviceDao deviceDao;
