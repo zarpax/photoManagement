@@ -265,7 +265,7 @@ public class PhotoManager implements IPhotoManagement {
 		return p;
 	}	
 	
-	private InputStream getResizedPhotoForDevice(Photo p, User u, Integer width, Integer height) {
+	public InputStream getCachePhotoForDevice(Photo p, User u, Integer width, Integer height) {
 		InputStream iS = null;
 		boolean isError = false;
 		

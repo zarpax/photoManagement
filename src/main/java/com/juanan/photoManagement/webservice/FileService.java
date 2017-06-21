@@ -163,13 +163,23 @@ public class FileService {
 			Photo photoParam = new Photo();
 			photoParam.setPhotoId(new BigDecimal(photoId));
 			p = photoManager.getPhotoByIdWithoutFile(photoParam);
-			File f = new File(FilesHelper.getDirPathForPhoto(p, p.getUser()) + "/" + p.getName());
-			InputStream iS = new FileInputStream(f);
+
 			response.addHeader("Content-disposition", "attachment;filename=" + p.getName());
 			response.setContentType(p.getMime());
-			response.setContentLength((int)f.length());
-			IOUtils.copy(iS, response.getOutputStream());
-			response.flushBuffer();
+			int fileLength = -1;
+			
+			// TODO: Improve this if/else
+			if ((width > 0) && (height > 0)) {
+				InputStream iS = photoManager.getCachePhotoForDevice(p, p.getUser(), width, height);
+				fileLength = IOUtils.copy(iS, response.getOutputStream());
+			} else {			
+				File f = new File(FilesHelper.getDirPathForPhoto(p, p.getUser()) + "/" + p.getName());
+				InputStream iS = new FileInputStream(f);
+				fileLength = IOUtils.copy(iS, response.getOutputStream());
+			}
+			
+			response.setContentLength(fileLength);
+			response.flushBuffer();			
 		} catch (Exception e) {
 			logger.error("Exception when login", e);
 		}		
