@@ -88,6 +88,27 @@ public class FilesHelper {
 		Thumbnails.of(origin).size(50, 50).toFile(destination);		
 	}
 	
+	public static boolean existsThumb(Photo p, User u) {
+		Path path = Paths.get(getFilePathForThumb(p, u).concat(p.getName()));
+		
+		return Files.exists(path);
+	}
+	
+	public static boolean existsCache(Photo p, User u, int width, int height) {
+		Path path = Paths.get(getFilenamePathForPhotoCache(p, u, width, height).concat(p.getName()));
+		
+		return Files.exists(path);
+	}	
+	
+	public static void writeThumbs(Photo p, User u, int width, int height) throws IOException {
+		String origin = getFilePathForPhoto(p, u).concat(p.getName());
+		File destination = new File(getFilePathForThumb(p, u).concat(p.getName()));
+		destination.getParentFile().mkdirs();
+		destination.createNewFile();
+				
+		Thumbnails.of(origin).size(width, height).toFile(destination);		
+	}
+	
 	public static void writeCache(Photo p, User u, int width, int height) throws IOException {
 		String origin = getFilePathForPhoto(p, u).concat(p.getName());
 		File destination = new File(getFilenamePathForPhotoCache(p, u, width, height).concat(p.getName()));
