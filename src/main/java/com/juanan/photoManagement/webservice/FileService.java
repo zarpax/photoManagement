@@ -163,7 +163,7 @@ public class FileService {
 			Photo photoParam = new Photo();
 			photoParam.setPhotoId(new BigDecimal(photoId));
 			p = photoManager.getPhotoByIdWithoutFile(photoParam);
-			File f = new File(FilesHelper.getFilePathForPhoto(p, p.getUser()) + "/" + p.getName());
+			File f = new File(FilesHelper.getDirPathForPhoto(p, p.getUser()) + "/" + p.getName());
 			InputStream iS = new FileInputStream(f);
 			response.addHeader("Content-disposition", "attachment;filename=" + p.getName());
 			response.setContentType(p.getMime());
@@ -217,7 +217,7 @@ public class FileService {
 			photoParam.setPhotoId(new BigDecimal(photo.getPhotoId()));
 			p = photoManager.getPhotoByIdWithoutFile(photoParam);
 		
-			File f = new File(FilesHelper.getFilePathForThumb(p, p.getUser()) + "/" + p.getName());
+			File f = new File(FilesHelper.getDirPathForThumb(p, p.getUser()) + "/" + p.getName());
 			InputStream iS = new FileInputStream(f);
 			response.addHeader("Content-disposition", "attachment;filename=" + p.getName());
 			response.setContentType(p.getMime());
@@ -241,7 +241,7 @@ public class FileService {
 			photoParam.setPhotoId(new BigDecimal(photoId));
 			p = photoManager.getPhotoByIdWithoutFile(photoParam);
 		
-			File f = new File(FilesHelper.getFilePathForThumb(p, p.getUser()) + "/" + p.getName());
+			File f = new File(FilesHelper.getDirPathForThumb(p, p.getUser()) + "/" + p.getName());
 			InputStream iS = new FileInputStream(f);
 			response.addHeader("Content-disposition", "attachment;filename=" + p.getName());
 			response.setContentType(p.getMime());

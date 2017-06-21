@@ -1,7 +1,10 @@
 package com.juanan.photoManagement.business;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -45,8 +48,8 @@ public class PhotoManager implements IPhotoManagement {
 		
 		try {
 			if (!exists(photo)) {		
-				photo.setName(FilesHelper.getFilenamePathForPhoto(photo, user));
-				photo.setPath(FilesHelper.getFilePathForPhoto(photo, user));
+				photo.setName(FilesHelper.getFilenameForPhoto(photo, user));
+				photo.setPath(FilesHelper.getDirPathForPhoto(photo, user));
 				
 				Photo inserted = photoDao.insert(photo);
 				
@@ -262,8 +265,29 @@ public class PhotoManager implements IPhotoManagement {
 		return p;
 	}	
 	
-	private void getResizedPhotoForDevice(Photo photo, Integer width, Integer heigth) {
+	private InputStream getResizedPhotoForDevice(Photo p, User u, Integer width, Integer height) {
+		InputStream iS = null;
+		boolean isError = false;
 		
+		if (!FilesHelper.existsCache(p, u, width, height)) {
+			try {
+				FilesHelper.writeCache(p, u, width, height);
+			} catch (IOException e) {
+				isError = true;
+				logger.error("Exception when creating photo", e);
+			}
+		}
+		
+		if (!isError) {
+			File f = new File(FilesHelper.getDirPathForCache(p, u).concat(FilesHelper.getFilenameForPhotoCache(p, u, width, height)));
+			try {
+				iS = new FileInputStream(f);
+			} catch (FileNotFoundException e) {
+				logger.error("Exception when getting input stream", e);
+			}
+		}
+		
+		return iS;
 	}
 
 

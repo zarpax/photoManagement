@@ -80,8 +80,8 @@ public class FilesHelper {
 	}
 	
 	public static void writeThumbs(Photo p, User u) throws IOException {
-		String origin = getFilePathForPhoto(p, u).concat(p.getName());
-		File destination = new File(getFilePathForThumb(p, u).concat(p.getName()));
+		String origin = getDirPathForPhoto(p, u).concat(p.getName());
+		File destination = new File(getDirPathForThumb(p, u).concat(p.getName()));
 		destination.getParentFile().mkdirs();
 		destination.createNewFile();
 				
@@ -89,20 +89,20 @@ public class FilesHelper {
 	}
 	
 	public static boolean existsThumb(Photo p, User u) {
-		Path path = Paths.get(getFilePathForThumb(p, u).concat(p.getName()));
+		Path path = Paths.get(getDirPathForThumb(p, u).concat(p.getName()));
 		
 		return Files.exists(path);
 	}
 	
 	public static boolean existsCache(Photo p, User u, int width, int height) {
-		Path path = Paths.get(getFilenamePathForPhotoCache(p, u, width, height).concat(p.getName()));
+		Path path = Paths.get(getDirPathForCache(p, u).concat(getFilenameForPhotoCache(p, u, width, height).concat(p.getName())));
 		
 		return Files.exists(path);
 	}	
 	
 	public static void writeThumbs(Photo p, User u, int width, int height) throws IOException {
-		String origin = getFilePathForPhoto(p, u).concat(p.getName());
-		File destination = new File(getFilePathForThumb(p, u).concat(p.getName()));
+		String origin = getDirPathForPhoto(p, u).concat(p.getName());
+		File destination = new File(getDirPathForThumb(p, u).concat(p.getName()));
 		destination.getParentFile().mkdirs();
 		destination.createNewFile();
 				
@@ -110,8 +110,8 @@ public class FilesHelper {
 	}
 	
 	public static void writeCache(Photo p, User u, int width, int height) throws IOException {
-		String origin = getFilePathForPhoto(p, u).concat(p.getName());
-		File destination = new File(getFilenamePathForPhotoCache(p, u, width, height).concat(p.getName()));
+		String origin = getDirPathForCache(p, u).concat(p.getName());
+		File destination = new File(getFilenameForPhotoCache(p, u, width, height).concat(p.getName()));
 		destination.getParentFile().mkdirs();
 		destination.createNewFile();
 				
@@ -119,13 +119,13 @@ public class FilesHelper {
 	}	
 	
 	public static byte[] getBytesFromPhoto(Photo p, User u) throws IOException {
-		Path path = Paths.get(getFilePathForPhoto(p, u).concat("/").concat(p.getName()));
+		Path path = Paths.get(getDirPathForPhoto(p, u).concat("/").concat(p.getName()));
 		
 		return Files.readAllBytes(path);
 	}
 	
 	public static byte[] getBytesFromResizedPhoto(Photo p, User u, int width, int height) throws IOException {		
-		BufferedImage originalImage = ImageIO.read(new File(getFilePathForPhoto(p, u).concat("/").concat(p.getName())));
+		BufferedImage originalImage = ImageIO.read(new File(getDirPathForPhoto(p, u).concat("/").concat(p.getName())));
 
 		BufferedImage thumbnail = Thumbnails.of(originalImage).size(width, height).asBufferedImage();
 		
@@ -138,10 +138,10 @@ public class FilesHelper {
 		return imageInByte;
 	}
 	
-	public static String getPathFromResizedPhoto(Photo p, User u, int width, int height) throws IOException {		
-		BufferedImage originalImage = ImageIO.read(new File(getFilePathForPhoto(p, u).concat("/").concat(p.getName())));
+	public static String getFullPathForPhotoCache(Photo p, User u, int width, int height) throws IOException {		
+		BufferedImage originalImage = ImageIO.read(new File(getDirPathForPhoto(p, u).concat("/").concat(p.getName())));
 
-		String cachePath = getFilePathForCache(p, u).concat("/").concat(p.getName());
+		String cachePath = getDirPathForCache(p, u).concat("/").concat(p.getName());
 		
 		Thumbnails.of(originalImage).size(width, height).keepAspectRatio(true).toFile(cachePath);
 		
@@ -149,12 +149,12 @@ public class FilesHelper {
 	}	
 	
 	public static byte[] getBytesFromThumb(Photo p, User u) throws IOException {
-		Path path = Paths.get(getFilePathForThumb(p, u).concat("/").concat(p.getName()));
+		Path path = Paths.get(getDirPathForThumb(p, u).concat("/").concat(p.getName()));
 		
 		return Files.readAllBytes(path);
 	}	
 	
-	private static String getFilePathForPhoto(String dirPath, Photo p, User u) {
+	private static String getDirPathForPhoto(String dirPath, Photo p, User u) {
 		Calendar c = Calendar.getInstance();
 		c.setTime(p.getCreated());
 		String month = String.format("%02d", (c.get(Calendar.MONTH) + 1));
@@ -165,26 +165,26 @@ public class FilesHelper {
 		return path;
 	}
 	
-	public static String getFilePathForPhoto(Photo p, User u) {	
-		return getFilePathForPhoto(PHOTO_PATH, p, u);
+	public static String getDirPathForPhoto(Photo p, User u) {	
+		return getDirPathForPhoto(PHOTO_PATH, p, u);
 	}
 	
-	public static String getFilePathForThumb(Photo p, User u) {	
-		return getFilePathForPhoto(THUMBS_PATH, p, u);
+	public static String getDirPathForThumb(Photo p, User u) {	
+		return getDirPathForPhoto(THUMBS_PATH, p, u);
 	}
 	
-	public static String getFilePathForCache(Photo p, User u) {	
-		return getFilePathForPhoto(CACHE_PATH, p, u);
+	public static String getDirPathForCache(Photo p, User u) {	
+		return getDirPathForPhoto(CACHE_PATH, p, u);
 	}	
 	
-	public static String getFilenamePathForPhoto(Photo p, User u) {
+	public static String getFilenameForPhoto(Photo p, User u) {
 		String filename = FILENAME_FORMAT.replace(PARAM_CREATED_DATETIME, dateTimeFormat.format(p.getCreated())).replace(PARAM_USER, u.getName()).replace(PARAM_FILENAME, p.getName());
 		
 		return filename;
 	}
 	
-	public static String getFilenamePathForPhotoCache(Photo p, User u, int width, int height) {
-		String filename = FILENAME_FORMAT.replace(PARAM_CREATED_DATETIME, dateTimeFormat.format(p.getCreated())).replace(PARAM_USER, u.getName()).replace(PARAM_WIDTH, String.valueOf(width)).replace(PARAM_HEIGHT, String.valueOf(height)).replace(PARAM_FILENAME, p.getName());
+	public static String getFilenameForPhotoCache(Photo p, User u, int width, int height) {
+		String filename = FILENAME_FORMAT_CACHE.replace(PARAM_CREATED_DATETIME, dateTimeFormat.format(p.getCreated())).replace(PARAM_USER, u.getName()).replace(PARAM_WIDTH, String.valueOf(width)).replace(PARAM_HEIGHT, String.valueOf(height)).replace(PARAM_FILENAME, p.getName());
 		
 		return filename;
 	}
@@ -197,6 +197,6 @@ public class FilesHelper {
 		p.setCreated(new Date());
 		p.setName("Foto.jpg");
 		
-		logger.info(FilesHelper.getFilePathForPhoto(p, u));
+		logger.info(FilesHelper.getDirPathForPhoto(p, u));
 	}	
 }
