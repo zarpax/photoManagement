@@ -42,8 +42,8 @@ public class FilesHelper {
 	private static final String PARAM_WIDTH = "#{WIDTH}";
 	private static final String PARAM_HEIGHT = "#{HEIGTH}";
 	
-	private static String PHOTO_BASE_PATH = "D:/PhotoRepository";
-	//private static String PHOTO_BASE_PATH = "/zPendrive2/PhotoRepository";
+	//private static String PHOTO_BASE_PATH = "D:/PhotoRepository";
+	private static String PHOTO_BASE_PATH = "/zPendrive2/PhotoRepository";
 	private static final String PHOTO_DIR = "Photos";
 	private static final String THUMBNAILS_DIR = "Thumbs";
 	private static final String CACHE_DIR = "cache";
@@ -53,7 +53,7 @@ public class FilesHelper {
 	private static final String CACHE_PATH = PHOTO_BASE_PATH + "/" + CACHE_DIR + "/" + PARAM_CREATED_DATE_YEAR + "/" + PARAM_CREATED_DATE_MONTH + "/";
 	
 	private static final String FILENAME_FORMAT = PARAM_CREATED_DATETIME + "_" + PARAM_USER + "_" + PARAM_FILENAME;
-	private static final String FILENAME_FORMAT_CACHE = PARAM_CREATED_DATETIME + "_" + PARAM_USER + "_" + PARAM_WIDTH + "x" + "PARAM_HEIGTH" + "_" + PARAM_FILENAME;
+	private static final String FILENAME_FORMAT_CACHE = PARAM_WIDTH + "x" + PARAM_HEIGHT + "_" + PARAM_FILENAME;
 	
 	private static final DateFormat dateTimeFormat = new SimpleDateFormat(FORMAT_DATETIME);
 	
@@ -88,6 +88,32 @@ public class FilesHelper {
 		Thumbnails.of(origin).size(50, 50).toFile(destination);		
 	}
 	
+//	public static void createResizedImageLowMemory(String source, String destination, int newWidth, int newHeight) {
+//		FileInputStream fin = new FileInputStream(source);
+//
+//		ImageInputStream iis = ImageIO.createImageInputStream(fin);
+//
+//		Iterator iter = ImageIO.getImageReaders(iis);
+//		if (!iter.hasNext()) {
+//		    return;
+//		}
+//
+//		ImageReader reader = (ImageReader) iter.next();
+//
+//		ImageReadParam params = reader.getDefaultReadParam();
+//
+//		reader.setInput(iis, true, true);
+//
+//		params.setSourceSubsampling(newWidth, newHeight, 0, 0);
+//
+//		BufferedImage img = reader.read(0, params);
+//		
+//
+//		ImageIO.createImageOutputStream(output)
+//
+//		ImageIO.write(img, "JPG", destination);		
+//	}
+	
 	public static boolean existsThumb(Photo p, User u) {
 		Path path = Paths.get(getDirPathForThumb(p, u).concat(p.getName()));
 		
@@ -110,8 +136,8 @@ public class FilesHelper {
 	}
 	
 	public static void writeCache(Photo p, User u, int width, int height) throws IOException {
-		String origin = getDirPathForCache(p, u).concat(p.getName());
-		File destination = new File(getFilenameForPhotoCache(p, u, width, height).concat(p.getName()));
+		String origin = getDirPathForPhoto(p, u).concat(p.getName());
+		File destination = new File(getDirPathForCache(p, u).concat(getFilenameForPhotoCache(p, u, width, height)));
 		destination.getParentFile().mkdirs();
 		destination.createNewFile();
 				
@@ -138,15 +164,15 @@ public class FilesHelper {
 		return imageInByte;
 	}
 	
-	public static String getFullPathForPhotoCache(Photo p, User u, int width, int height) throws IOException {		
-		BufferedImage originalImage = ImageIO.read(new File(getDirPathForPhoto(p, u).concat("/").concat(p.getName())));
-
-		String cachePath = getDirPathForCache(p, u).concat("/").concat(p.getName());
-		
-		Thumbnails.of(originalImage).size(width, height).keepAspectRatio(true).toFile(cachePath);
-		
-		return cachePath;
-	}	
+//	public static String getFullPathForPhotoCache(Photo p, User u, int width, int height) throws IOException {		
+//		BufferedImage originalImage = ImageIO.read(new File(getDirPathForPhoto(p, u).concat("/").concat(p.getName())));
+//
+//		String cachePath = getDirPathForCache(p, u).concat("/").concat(p.getName());
+//		
+//		Thumbnails.of(originalImage).size(width, height).keepAspectRatio(true).toFile(cachePath);
+//		
+//		return cachePath;
+//	}	
 	
 	public static byte[] getBytesFromThumb(Photo p, User u) throws IOException {
 		Path path = Paths.get(getDirPathForThumb(p, u).concat("/").concat(p.getName()));

@@ -136,23 +136,29 @@ public class FileService {
 		return new ResponseEntity<Boolean>(status, headers, HttpStatus.OK);
 	}	
 	
+//	@CrossOrigin(origins = "*")
+//	@RequestMapping(value="/getPhoto", method=RequestMethod.POST)
+//	public ResponseEntity<Photo> getPhoto(@RequestBody PhotoDTO photo) {
+//		Photo p = null;
+//	    final HttpHeaders headers = new HttpHeaders();
+//	    
+//		try {
+//			logger.debug("Solicitando foto con id[" + photo.getPhotoId() + "]");
+//			Photo photoParam = new Photo();
+//			photoParam.setPhotoId(new BigDecimal(photo.getPhotoId()));
+//			p = photoManager.getPhotoById(photoParam, photo.getWidth(), photo.getHeigth());
+//			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+//		} catch (Exception e) {
+//			logger.error("Exception when login", e);
+//		}
+//		
+//		return new ResponseEntity<Photo>(p, headers, HttpStatus.CREATED);
+//	}	
+	
 	@CrossOrigin(origins = "*")
 	@RequestMapping(value="/getPhoto", method=RequestMethod.POST)
-	public ResponseEntity<Photo> getPhoto(@RequestBody PhotoDTO photo) {
-		Photo p = null;
-	    final HttpHeaders headers = new HttpHeaders();
-	    
-		try {
-			logger.debug("Solicitando foto con id[" + photo.getPhotoId() + "]");
-			Photo photoParam = new Photo();
-			photoParam.setPhotoId(new BigDecimal(photo.getPhotoId()));
-			p = photoManager.getPhotoById(photoParam, photo.getWidth(), photo.getHeigth());
-			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-		} catch (Exception e) {
-			logger.error("Exception when login", e);
-		}
-		
-		return new ResponseEntity<Photo>(p, headers, HttpStatus.CREATED);
+	public void getPhoto(@RequestBody PhotoDTO photo, HttpServletResponse response) {
+		sendPhoto((long)photo.getPhotoId(), photo.getWidth(), photo.getHeigth(), response);
 	}	
 	
 	private void sendPhoto(Long photoId, int width, int height, HttpServletResponse response) {
@@ -192,8 +198,8 @@ public class FileService {
 	}
 	
 	@CrossOrigin(origins = "*")
-	@RequestMapping(value="/getPhoto/{photoId}/{width}/{height}", method=RequestMethod.GET)
-	public void getPhoto(@PathVariable Long photoId, @PathVariable Integer width, @PathVariable Integer heigth, HttpServletResponse response) {
+	@RequestMapping(value="/getPhoto/{photoId}/{width}/{heigth}", method=RequestMethod.GET)
+	public void getPhoto(@PathVariable Long photoId, @PathVariable int width, @PathVariable int heigth, HttpServletResponse response) {
 		sendPhoto(photoId, width, heigth, response);
 	}	
 	
