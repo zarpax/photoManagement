@@ -57,7 +57,6 @@ public class PhotoManager implements IPhotoManagement {
 					result = IPhotoManagement.ERROR;
 				} else {
 					FilesHelper.writeFile(photo.getBytes(), photo.getPath() + photo.getName());
-					FilesHelper.writeThumbs(photo, user);
 				}
 				
 			} else {
@@ -284,6 +283,31 @@ public class PhotoManager implements IPhotoManagement {
 				iS = new FileInputStream(f);
 			} catch (FileNotFoundException e) {
 				logger.error("Exception when getting input stream", e);
+			}
+		}
+		
+		return iS;
+	}
+	
+	public InputStream getThumbPhotoForDevice(Photo p, User u, Integer width, Integer height) {
+		InputStream iS = null;
+		boolean isError = false;
+		
+		if (!FilesHelper.existsThumb(p, u, width, height)) {
+			try {
+				FilesHelper.writeThumb(p, u, width, height);
+			} catch (IOException e) {
+				isError = true;
+				logger.error("Exception when creating thumb", e);
+			}
+		}
+		
+		if (!isError) {
+			File f = new File(FilesHelper.getDirPathForThumb(p, u).concat(FilesHelper.getFilenameForThumb(p, u, width, height)));
+			try {
+				iS = new FileInputStream(f);
+			} catch (FileNotFoundException e) {
+				logger.error("Exception when getting input stream for thumb", e);
 			}
 		}
 		

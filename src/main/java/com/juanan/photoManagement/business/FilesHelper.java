@@ -54,6 +54,7 @@ public class FilesHelper {
 	
 	private static final String FILENAME_FORMAT = PARAM_CREATED_DATETIME + "_" + PARAM_USER + "_" + PARAM_FILENAME;
 	private static final String FILENAME_FORMAT_CACHE = PARAM_WIDTH + "x" + PARAM_HEIGHT + "_" + PARAM_FILENAME;
+	private static final String FILENAME_FORMAT_THUMB = PARAM_WIDTH + "x" + PARAM_HEIGHT + "_" + PARAM_FILENAME;
 	
 	private static final DateFormat dateTimeFormat = new SimpleDateFormat(FORMAT_DATETIME);
 	
@@ -79,14 +80,14 @@ public class FilesHelper {
         stream.close();		
 	}
 	
-	public static void writeThumbs(Photo p, User u) throws IOException {
-		String origin = getDirPathForPhoto(p, u).concat(p.getName());
-		File destination = new File(getDirPathForThumb(p, u).concat(p.getName()));
-		destination.getParentFile().mkdirs();
-		destination.createNewFile();
-				
-		Thumbnails.of(origin).size(50, 50).toFile(destination);		
-	}
+//	public static void writeThumbs(Photo p, User u) throws IOException {
+//		String origin = getDirPathForPhoto(p, u).concat(p.getName());
+//		File destination = new File(getDirPathForThumb(p, u).concat(p.getName()));
+//		destination.getParentFile().mkdirs();
+//		destination.createNewFile();
+//				
+//		Thumbnails.of(origin).size(50, 50).toFile(destination);		
+//	}
 	
 //	public static void createResizedImageLowMemory(String source, String destination, int newWidth, int newHeight) {
 //		FileInputStream fin = new FileInputStream(source);
@@ -114,8 +115,8 @@ public class FilesHelper {
 //		ImageIO.write(img, "JPG", destination);		
 //	}
 	
-	public static boolean existsThumb(Photo p, User u) {
-		Path path = Paths.get(getDirPathForThumb(p, u).concat(p.getName()));
+	public static boolean existsThumb(Photo p, User u, int width, int height) {
+		Path path = Paths.get(getDirPathForThumb(p, u).concat(getFilenameForThumb(p, u, width, height).concat(p.getName())));
 		
 		return Files.exists(path);
 	}
@@ -126,9 +127,9 @@ public class FilesHelper {
 		return Files.exists(path);
 	}	
 	
-	public static void writeThumbs(Photo p, User u, int width, int height) throws IOException {
+	public static void writeThumb(Photo p, User u, int width, int height) throws IOException {
 		String origin = getDirPathForPhoto(p, u).concat(p.getName());
-		File destination = new File(getDirPathForThumb(p, u).concat(p.getName()));
+		File destination = new File(getDirPathForThumb(p, u).concat(getFilenameForThumb(p, u, width, height)));
 		destination.getParentFile().mkdirs();
 		destination.createNewFile();
 				
@@ -214,6 +215,12 @@ public class FilesHelper {
 		
 		return filename;
 	}
+	
+	public static String getFilenameForThumb(Photo p, User u, int width, int height) {
+		String filename = FILENAME_FORMAT_THUMB.replace(PARAM_CREATED_DATETIME, dateTimeFormat.format(p.getCreated())).replace(PARAM_USER, u.getName()).replace(PARAM_WIDTH, String.valueOf(width)).replace(PARAM_HEIGHT, String.valueOf(height)).replace(PARAM_FILENAME, p.getName());
+		
+		return filename;
+	}	
 	
 	public static void main(String... argv) {
 		Photo p = new Photo();

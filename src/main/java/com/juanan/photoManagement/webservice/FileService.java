@@ -136,25 +136,6 @@ public class FileService {
 		return new ResponseEntity<Boolean>(status, headers, HttpStatus.OK);
 	}	
 	
-//	@CrossOrigin(origins = "*")
-//	@RequestMapping(value="/getPhoto", method=RequestMethod.POST)
-//	public ResponseEntity<Photo> getPhoto(@RequestBody PhotoDTO photo) {
-//		Photo p = null;
-//	    final HttpHeaders headers = new HttpHeaders();
-//	    
-//		try {
-//			logger.debug("Solicitando foto con id[" + photo.getPhotoId() + "]");
-//			Photo photoParam = new Photo();
-//			photoParam.setPhotoId(new BigDecimal(photo.getPhotoId()));
-//			p = photoManager.getPhotoById(photoParam, photo.getWidth(), photo.getHeigth());
-//			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-//		} catch (Exception e) {
-//			logger.error("Exception when login", e);
-//		}
-//		
-//		return new ResponseEntity<Photo>(p, headers, HttpStatus.CREATED);
-//	}	
-	
 	@CrossOrigin(origins = "*")
 	@RequestMapping(value="/getPhoto", method=RequestMethod.POST)
 	public void getPhoto(@RequestBody PhotoDTO photo, HttpServletResponse response) {
@@ -187,7 +168,7 @@ public class FileService {
 			response.setContentLength(fileLength);
 			response.flushBuffer();			
 		} catch (Exception e) {
-			logger.error("Exception when login", e);
+			logger.error("Exception when sending a photo", e);
 		}		
 	}
 	
@@ -216,7 +197,7 @@ public class FileService {
 			p = photoManager.getPhotoById(photoParam, photo.getWidth(), photo.getHeigth());
 			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 		} catch (Exception e) {
-			logger.error("Exception when login", e);
+			logger.error("Exception when getting thumb", e);
 		}
 		
 		return new ResponseEntity<Photo>(p, headers, HttpStatus.CREATED);
@@ -247,8 +228,8 @@ public class FileService {
 	
 
 	@CrossOrigin(origins = "*")
-	@RequestMapping(value="/getThumb/{photoId}", method=RequestMethod.GET)
-	public void downloadThumbGet(@PathVariable Long photoId, HttpServletResponse response) {
+	@RequestMapping(value="/getThumb/{photoId}/{width}/{height}", method=RequestMethod.GET)
+	public void downloadThumbGet(@PathVariable Long photoId, @PathVariable int width, @PathVariable int height, HttpServletResponse response) {
 		Photo p = null;
 	    
 		try {
@@ -257,15 +238,17 @@ public class FileService {
 			photoParam.setPhotoId(new BigDecimal(photoId));
 			p = photoManager.getPhotoByIdWithoutFile(photoParam);
 		
-			File f = new File(FilesHelper.getDirPathForThumb(p, p.getUser()) + "/" + p.getName());
-			InputStream iS = new FileInputStream(f);
 			response.addHeader("Content-disposition", "attachment;filename=" + p.getName());
 			response.setContentType(p.getMime());
-			response.setContentLength((int)f.length());
-			IOUtils.copy(iS, response.getOutputStream());
-			response.flushBuffer();
+			int fileLength = -1;
+
+			InputStream iS = photoManager.getCachePhotoForDevice(p, p.getUser(), width, height);
+			fileLength = IOUtils.copy(iS, response.getOutputStream());			
+			
+			response.setContentLength(fileLength);
+			response.flushBuffer();						
 		} catch (Exception e) {
-			logger.error("Exception when login", e);
+			logger.error("Exception when getting one thumb", e);
 		}
 	}	
 	
