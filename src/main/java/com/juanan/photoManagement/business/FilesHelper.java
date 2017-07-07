@@ -26,6 +26,7 @@ import com.juanan.photoManagement.data.entity.Photo;
 import com.juanan.photoManagement.data.entity.User;
 
 import net.coobird.thumbnailator.Thumbnails;
+import net.coobird.thumbnailator.geometry.Positions;
 
 public class FilesHelper {
 
@@ -43,10 +44,10 @@ public class FilesHelper {
 	private static final String PARAM_HEIGHT = "#{HEIGTH}";
 	
 	//private static String PHOTO_BASE_PATH = "D:/PhotoRepository";
-	private static String PHOTO_BASE_PATH = "/zPendrive2/PhotoRepository";
+	private static String PHOTO_BASE_PATH = "/zPendrive/PhotoRepository";
 	private static final String PHOTO_DIR = "Photos";
 	private static final String THUMBNAILS_DIR = "Thumbs";
-	private static final String CACHE_DIR = "cache";
+	private static final String CACHE_DIR = "Cache";
 	
 	private static final String PHOTO_PATH = PHOTO_BASE_PATH + "/" + PHOTO_DIR + "/" + PARAM_CREATED_DATE_YEAR + "/" + PARAM_CREATED_DATE_MONTH + "/";
 	private static final String THUMBS_PATH = PHOTO_BASE_PATH + "/" + THUMBNAILS_DIR + "/" + PARAM_CREATED_DATE_YEAR + "/" + PARAM_CREATED_DATE_MONTH + "/";
@@ -133,7 +134,7 @@ public class FilesHelper {
 		destination.getParentFile().mkdirs();
 		destination.createNewFile();
 				
-		Thumbnails.of(origin).size(width, height).toFile(destination);		
+		Thumbnails.of(origin).size(width, height).crop(Positions.CENTER).toFile(destination);		
 	}
 	
 	public static void writeCache(Photo p, User u, int width, int height) throws IOException {
@@ -142,7 +143,7 @@ public class FilesHelper {
 		destination.getParentFile().mkdirs();
 		destination.createNewFile();
 				
-		Thumbnails.of(origin).size(width, height).toFile(destination);		
+		Thumbnails.of(origin).size(width, height).crop(Positions.CENTER).toFile(destination);		
 	}	
 	
 	public static byte[] getBytesFromPhoto(Photo p, User u) throws IOException {

@@ -23,9 +23,6 @@
 	</appender>	
 
 	<!-- 3rdparty Loggers -->
-	<logger name="cyii.mc3">
-		<level value="info" />
-	</logger>
 	<logger name="org.springframework.core">
 		<level value="info" />
 	</logger>
@@ -41,11 +38,19 @@
 	<logger name="org.springframework.web">
 		<level value="info" />
 	</logger>
+	
+	<logger name="org.hibernate">
+		<level value="error" />
+	</logger>
+		
+	<logger name="org.hibernate.SQL">
+		<level value="error" />
+	</logger>	
 
 	<!-- Root Logger -->
 	<root>
 		<priority value="info" />
-		<appender-ref ref="console" />
+		<!-- <appender-ref ref="console" /> -->
 		<appender-ref ref="file" />
 	</root>
 

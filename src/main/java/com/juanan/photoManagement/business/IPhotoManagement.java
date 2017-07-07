@@ -33,6 +33,7 @@ public interface IPhotoManagement {
 	public Photo getPhotoByIdWithoutFile(Photo photo);
 	public Photo getPhotoById(Photo photo, int width, int height);
 	public InputStream getCachePhotoForDevice(Photo p, User u, Integer width, Integer height);
+	public InputStream getThumbPhotoForDevice(Photo p, User u, Integer width, Integer height);
 	public List<Photo> getRecentThumbs(int number); // TODO: Delete is only for testing front
 	public List<Photo> getRandomPhotos(int number); // TODO: Delete is only for testing front
 	

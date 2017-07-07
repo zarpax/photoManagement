@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
@@ -154,19 +155,21 @@ public class FileService {
 			response.addHeader("Content-disposition", "attachment;filename=" + p.getName());
 			response.setContentType(p.getMime());
 			int fileLength = -1;
+			InputStream iS = null;
 			
 			// TODO: Improve this if/else
 			if ((width > 0) && (height > 0)) {
-				InputStream iS = photoManager.getCachePhotoForDevice(p, p.getUser(), width, height);
-				fileLength = IOUtils.copy(iS, response.getOutputStream());
+				iS = photoManager.getCachePhotoForDevice(p, p.getUser(), width, height);
 			} else {			
 				File f = new File(FilesHelper.getDirPathForPhoto(p, p.getUser()) + "/" + p.getName());
-				InputStream iS = new FileInputStream(f);
-				fileLength = IOUtils.copy(iS, response.getOutputStream());
+				iS = new FileInputStream(f);				
 			}
 			
+			fileLength = IOUtils.copy(iS, response.getOutputStream());
 			response.setContentLength(fileLength);
 			response.flushBuffer();			
+			iS.close();
+			response.getOutputStream().close();
 		} catch (Exception e) {
 			logger.error("Exception when sending a photo", e);
 		}		
@@ -219,8 +222,18 @@ public class FileService {
 			response.addHeader("Content-disposition", "attachment;filename=" + p.getName());
 			response.setContentType(p.getMime());
 			response.setContentLength((int)f.length());
-			IOUtils.copy(iS, response.getOutputStream());
-			response.flushBuffer();
+			
+			ServletOutputStream out = response.getOutputStream();
+			byte[] bytes = new byte[512];
+			int bytesRead;
+
+			while ((bytesRead = iS.read(bytes)) != -1) {
+			    out.write(bytes, 0, bytesRead);
+			}
+
+			// do the following in a finally block:
+			iS.close();
+			out.close();
 		} catch (Exception e) {
 			logger.error("Exception when login", e);
 		}
@@ -240,13 +253,27 @@ public class FileService {
 		
 			response.addHeader("Content-disposition", "attachment;filename=" + p.getName());
 			response.setContentType(p.getMime());
-			int fileLength = -1;
+			int fileLength = 0;
 
-			InputStream iS = photoManager.getCachePhotoForDevice(p, p.getUser(), width, height);
-			fileLength = IOUtils.copy(iS, response.getOutputStream());			
+			InputStream iS = photoManager.getThumbPhotoForDevice(p, p.getUser(), width, height);
+			//fileLength = IOUtils.copy(iS, response.getOutputStream());			
 			
+			ServletOutputStream out = response.getOutputStream();
+			byte[] bytes = new byte[512];
+			int bytesRead;
+
+			while ((bytesRead = iS.read(bytes)) != -1) {
+			    out.write(bytes, 0, bytesRead);
+			    fileLength += bytesRead;
+			}
+						
 			response.setContentLength(fileLength);
-			response.flushBuffer();						
+			response.flushBuffer();
+			
+
+			// do the following in a finally block:
+			iS.close();
+			out.close();			
 		} catch (Exception e) {
 			logger.error("Exception when getting one thumb", e);
 		}
