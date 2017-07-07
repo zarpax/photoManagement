@@ -133,8 +133,10 @@ public class FilesHelper {
 		File destination = new File(getDirPathForThumb(p, u).concat(getFilenameForThumb(p, u, width, height)));
 		destination.getParentFile().mkdirs();
 		destination.createNewFile();
-				
-		Thumbnails.of(origin).size(width, height).crop(Positions.CENTER).toFile(destination);		
+		
+		logger.debug("Creating thumbs for image[" + origin + "]");
+		Thumbnails.of(origin).size(width, height).crop(Positions.CENTER).toFile(destination);
+		logger.debug("Thumbs for image[" + origin + "] created");
 	}
 	
 	public static void writeCache(Photo p, User u, int width, int height) throws IOException {
@@ -142,8 +144,10 @@ public class FilesHelper {
 		File destination = new File(getDirPathForCache(p, u).concat(getFilenameForPhotoCache(p, u, width, height)));
 		destination.getParentFile().mkdirs();
 		destination.createNewFile();
-				
-		Thumbnails.of(origin).size(width, height).crop(Positions.CENTER).toFile(destination);		
+		
+		logger.debug("Creating cache for image[" + origin + "]");
+		Thumbnails.of(origin).size(width, height).crop(Positions.CENTER).toFile(destination);
+		logger.debug("Cache for image[" + origin + "] created");
 	}	
 	
 	public static byte[] getBytesFromPhoto(Photo p, User u) throws IOException {
@@ -155,7 +159,9 @@ public class FilesHelper {
 	public static byte[] getBytesFromResizedPhoto(Photo p, User u, int width, int height) throws IOException {		
 		BufferedImage originalImage = ImageIO.read(new File(getDirPathForPhoto(p, u).concat("/").concat(p.getName())));
 
+		logger.debug("Getting bytes for image[" + getDirPathForPhoto(p, u).concat("/").concat(p.getName()) + "]");
 		BufferedImage thumbnail = Thumbnails.of(originalImage).size(width, height).asBufferedImage();
+		logger.debug("Bytes for image[" + getDirPathForPhoto(p, u).concat("/").concat(p.getName()) + "] loaded");
 		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ImageIO.write( thumbnail, "jpg", baos );
