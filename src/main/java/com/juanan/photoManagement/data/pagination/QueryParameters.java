@@ -2,8 +2,7 @@ package com.juanan.photoManagement.data.pagination;
 
 import java.util.Date;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 import com.juanan.photoManagement.data.exception.DevelopmentException;
 
@@ -13,7 +12,7 @@ public class QueryParameters {
 	public String type = null;
 	public String value = null;
 	
-	static Log logger = LogFactory.getLog(QueryParameters.class);
+	static Logger logger = Logger.getLogger(QueryParameters.class);
 
 	
 	public enum Type {
