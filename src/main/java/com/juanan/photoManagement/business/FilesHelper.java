@@ -21,13 +21,14 @@ import javax.imageio.ImageIO;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.im4java.core.ConvertCmd;
+import org.im4java.core.IM4JavaException;
+import org.im4java.core.IMOperation;
 
 import com.juanan.photoManagement.data.entity.Photo;
 import com.juanan.photoManagement.data.entity.User;
 
 import net.coobird.thumbnailator.Thumbnails;
-import net.coobird.thumbnailator.geometry.Positions;
 
 public class FilesHelper {
 
@@ -46,6 +47,8 @@ public class FilesHelper {
 	
 	//private static String PHOTO_BASE_PATH = "D:/PhotoRepository";
 	private static String PHOTO_BASE_PATH = "/zPendrive/PhotoRepository";
+	//private static String IM_PATH = "C:\\Program Files\\ImageMagick-7.0.6-Q16";
+	private static String IM_PATH = "/usr/bin";
 	private static final String PHOTO_DIR = "Photos";
 	private static final String THUMBNAILS_DIR = "Thumbs";
 	private static final String CACHE_DIR = "Cache";
@@ -81,42 +84,7 @@ public class FilesHelper {
         stream.write(fileInfo);
         stream.close();		
 	}
-	
-//	public static void writeThumbs(Photo p, User u) throws IOException {
-//		String origin = getDirPathForPhoto(p, u).concat(p.getName());
-//		File destination = new File(getDirPathForThumb(p, u).concat(p.getName()));
-//		destination.getParentFile().mkdirs();
-//		destination.createNewFile();
-//				
-//		Thumbnails.of(origin).size(50, 50).toFile(destination);		
-//	}
-	
-//	public static void createResizedImageLowMemory(String source, String destination, int newWidth, int newHeight) {
-//		FileInputStream fin = new FileInputStream(source);
-//
-//		ImageInputStream iis = ImageIO.createImageInputStream(fin);
-//
-//		Iterator iter = ImageIO.getImageReaders(iis);
-//		if (!iter.hasNext()) {
-//		    return;
-//		}
-//
-//		ImageReader reader = (ImageReader) iter.next();
-//
-//		ImageReadParam params = reader.getDefaultReadParam();
-//
-//		reader.setInput(iis, true, true);
-//
-//		params.setSourceSubsampling(newWidth, newHeight, 0, 0);
-//
-//		BufferedImage img = reader.read(0, params);
-//		
-//
-//		ImageIO.createImageOutputStream(output)
-//
-//		ImageIO.write(img, "JPG", destination);		
-//	}
-	
+		
 	public static boolean existsThumb(Photo p, User u, int width, int height) {
 		Path path = Paths.get(getDirPathForThumb(p, u).concat(getFilenameForThumb(p, u, width, height).concat(p.getName())));
 		
@@ -129,25 +97,43 @@ public class FilesHelper {
 		return Files.exists(path);
 	}	
 	
-	public static void writeThumb(Photo p, User u, int width, int height) throws IOException {
+	public static void writeThumb(Photo p, User u, int width, int height) throws IOException, InterruptedException, IM4JavaException {
 		String origin = getDirPathForPhoto(p, u).concat(p.getName());
-		File destination = new File(getDirPathForThumb(p, u).concat(getFilenameForThumb(p, u, width, height)));
+		String destinationPath = getDirPathForThumb(p, u).concat(getFilenameForThumb(p, u, width, height));
+		File destination = new File(destinationPath);
 		destination.getParentFile().mkdirs();
 		destination.createNewFile();
 		
 		logger.debug("Creating thumbs for image[" + origin + "]");
-		Thumbnails.of(origin).size(width, height).crop(Positions.CENTER).toFile(destination);
+		ConvertCmd cmd = new ConvertCmd();
+		cmd.setSearchPath(IM_PATH);
+
+		IMOperation op = new IMOperation();
+		op.addImage(origin);
+		op.resize(width,height);
+		op.addImage(destinationPath);
+
+		cmd.run(op);
 		logger.debug("Thumbs for image[" + origin + "] created");
-	}
+	}	
 	
-	public static void writeCache(Photo p, User u, int width, int height) throws IOException {
+	public static void writeCache(Photo p, User u, int width, int height) throws IOException, InterruptedException, IM4JavaException {
 		String origin = getDirPathForPhoto(p, u).concat(p.getName());
-		File destination = new File(getDirPathForCache(p, u).concat(getFilenameForPhotoCache(p, u, width, height)));
+		String destinationPath = getDirPathForCache(p, u).concat(getFilenameForPhotoCache(p, u, width, height));
+		File destination = new File(destinationPath);
 		destination.getParentFile().mkdirs();
 		destination.createNewFile();
 		
 		logger.debug("Creating cache for image[" + origin + "]");
-		Thumbnails.of(origin).size(width, height).crop(Positions.CENTER).toFile(destination);
+		ConvertCmd cmd = new ConvertCmd();
+		cmd.setSearchPath(IM_PATH);
+
+		IMOperation op = new IMOperation();
+		op.addImage(origin);
+		op.resize(width,height);
+		op.addImage(destinationPath);
+
+		cmd.run(op);
 		logger.debug("Cache for image[" + origin + "] created");
 	}	
 	
@@ -172,16 +158,6 @@ public class FilesHelper {
 		
 		return imageInByte;
 	}
-	
-//	public static String getFullPathForPhotoCache(Photo p, User u, int width, int height) throws IOException {		
-//		BufferedImage originalImage = ImageIO.read(new File(getDirPathForPhoto(p, u).concat("/").concat(p.getName())));
-//
-//		String cachePath = getDirPathForCache(p, u).concat("/").concat(p.getName());
-//		
-//		Thumbnails.of(originalImage).size(width, height).keepAspectRatio(true).toFile(cachePath);
-//		
-//		return cachePath;
-//	}	
 	
 	public static byte[] getBytesFromThumb(Photo p, User u) throws IOException {
 		Path path = Paths.get(getDirPathForThumb(p, u).concat("/").concat(p.getName()));

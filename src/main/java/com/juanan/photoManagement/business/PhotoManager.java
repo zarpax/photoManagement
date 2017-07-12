@@ -15,6 +15,7 @@ import java.util.Map;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.im4java.core.IM4JavaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -274,6 +275,12 @@ public class PhotoManager implements IPhotoManagement {
 			} catch (IOException e) {
 				isError = true;
 				logger.error("Exception when creating photo", e);
+			} catch (InterruptedException e) {
+				isError = true;
+				logger.error("Exception when creating photo", e);
+			} catch (IM4JavaException e) {
+				isError = true;
+				logger.error("Exception when creating photo", e);
 			}
 		}
 		
@@ -297,6 +304,12 @@ public class PhotoManager implements IPhotoManagement {
 			try {
 				FilesHelper.writeThumb(p, u, width, height);
 			} catch (IOException e) {
+				isError = true;
+				logger.error("Exception when creating thumb", e);
+			} catch (InterruptedException e) {
+				isError = true;
+				logger.error("Exception when creating thumb", e);
+			} catch (IM4JavaException e) {
 				isError = true;
 				logger.error("Exception when creating thumb", e);
 			}
