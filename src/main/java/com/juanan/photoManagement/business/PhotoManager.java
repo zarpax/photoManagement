@@ -237,20 +237,20 @@ public class PhotoManager implements IPhotoManagement {
 	}
 
 
-	@Override
-	public Photo getPhotoById(Photo photo, int width, int height) {
-		Photo p = null;
-		
-		try {
-			p = photoDao.select(photo.getId());
-			
-			p.setBytes(FilesHelper.getBytesFromResizedPhoto(p, p.getUser(), width, height));
-		} catch (Exception e) {
-			logger.error("Exception when getting photo", e);
-		}
-		
-		return p;
-	}
+//	@Override
+//	public Photo getPhotoById(Photo photo, int width, int height) {
+//		Photo p = null;
+//		
+//		try {
+//			p = photoDao.select(photo.getId());
+//			
+//			p.setBytes(FilesHelper.getBytesFromResizedPhoto(p, p.getUser(), width, height));
+//		} catch (Exception e) {
+//			logger.error("Exception when getting photo", e);
+//		}
+//		
+//		return p;
+//	}
 
 	@Override
 	public Photo getPhotoByIdWithoutFile(Photo photo) {

@@ -31,7 +31,7 @@ public interface IPhotoManagement {
 	public List<Photo> getPhotosFromLastSync(Date lastSync);
 	public Photo getPhotoById(Photo photo);
 	public Photo getPhotoByIdWithoutFile(Photo photo);
-	public Photo getPhotoById(Photo photo, int width, int height);
+//	public Photo getPhotoById(Photo photo, int width, int height);
 	public InputStream getCachePhotoForDevice(Photo p, User u, Integer width, Integer height);
 	public InputStream getThumbPhotoForDevice(Photo p, User u, Integer width, Integer height);
 	public List<Photo> getRecentThumbs(int number); // TODO: Delete is only for testing front

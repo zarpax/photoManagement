@@ -1,8 +1,6 @@
 package com.juanan.photoManagement.business;
 
-import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -16,8 +14,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import javax.imageio.ImageIO;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,8 +23,6 @@ import org.im4java.core.IMOperation;
 
 import com.juanan.photoManagement.data.entity.Photo;
 import com.juanan.photoManagement.data.entity.User;
-
-import net.coobird.thumbnailator.Thumbnails;
 
 public class FilesHelper {
 
@@ -110,7 +104,9 @@ public class FilesHelper {
 
 		IMOperation op = new IMOperation();
 		op.addImage(origin);
-		op.resize(width,height);
+		op.autoOrient();
+		//op.resize(width,height);
+		op.geometry(width, height);
 		op.addImage(destinationPath);
 
 		cmd.run(op);
@@ -130,7 +126,9 @@ public class FilesHelper {
 
 		IMOperation op = new IMOperation();
 		op.addImage(origin);
-		op.resize(width,height);
+		op.autoOrient();
+		//op.resize(width,height);
+		op.geometry(width, height);
 		op.addImage(destinationPath);
 
 		cmd.run(op);
@@ -143,21 +141,21 @@ public class FilesHelper {
 		return Files.readAllBytes(path);
 	}
 	
-	public static byte[] getBytesFromResizedPhoto(Photo p, User u, int width, int height) throws IOException {		
-		BufferedImage originalImage = ImageIO.read(new File(getDirPathForPhoto(p, u).concat("/").concat(p.getName())));
-
-		logger.debug("Getting bytes for image[" + getDirPathForPhoto(p, u).concat("/").concat(p.getName()) + "]");
-		BufferedImage thumbnail = Thumbnails.of(originalImage).size(width, height).asBufferedImage();
-		logger.debug("Bytes for image[" + getDirPathForPhoto(p, u).concat("/").concat(p.getName()) + "] loaded");
-		
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ImageIO.write( thumbnail, "jpg", baos );
-		baos.flush();
-		byte[] imageInByte = baos.toByteArray();
-		baos.close();
-		
-		return imageInByte;
-	}
+//	public static byte[] getBytesFromResizedPhoto(Photo p, User u, int width, int height) throws IOException {		
+//		BufferedImage originalImage = ImageIO.read(new File(getDirPathForPhoto(p, u).concat("/").concat(p.getName())));
+//
+//		logger.debug("Getting bytes for image[" + getDirPathForPhoto(p, u).concat("/").concat(p.getName()) + "]");
+//		BufferedImage thumbnail = Thumbnails.of(originalImage).size(width, height).asBufferedImage();
+//		logger.debug("Bytes for image[" + getDirPathForPhoto(p, u).concat("/").concat(p.getName()) + "] loaded");
+//		
+//		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//		ImageIO.write( thumbnail, "jpg", baos );
+//		baos.flush();
+//		byte[] imageInByte = baos.toByteArray();
+//		baos.close();
+//		
+//		return imageInByte;
+//	}
 	
 	public static byte[] getBytesFromThumb(Photo p, User u) throws IOException {
 		Path path = Paths.get(getDirPathForThumb(p, u).concat("/").concat(p.getName()));

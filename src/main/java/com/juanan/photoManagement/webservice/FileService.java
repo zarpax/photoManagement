@@ -187,24 +187,24 @@ public class FileService {
 		sendPhoto(photoId, width, heigth, response);
 	}	
 	
-	@CrossOrigin(origins = "*")
-	@RequestMapping(value="/getThumb", method=RequestMethod.POST)
-	public ResponseEntity<Photo> getThumb(@RequestBody PhotoDTO photo) {
-		Photo p = null;
-	    final HttpHeaders headers = new HttpHeaders();
-	    
-		try {
-			logger.debug("Solicitando foto con id[" + photo.getPhotoId() + "]");
-			Photo photoParam = new Photo();
-			photoParam.setPhotoId(new BigDecimal(photo.getPhotoId()));
-			p = photoManager.getPhotoById(photoParam, photo.getWidth(), photo.getHeigth());
-			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-		} catch (Exception e) {
-			logger.error("Exception when getting thumb", e);
-		}
-		
-		return new ResponseEntity<Photo>(p, headers, HttpStatus.CREATED);
-	}
+//	@CrossOrigin(origins = "*")
+//	@RequestMapping(value="/getThumb", method=RequestMethod.POST)
+//	public ResponseEntity<Photo> getThumb(@RequestBody PhotoDTO photo) {
+//		Photo p = null;
+//	    final HttpHeaders headers = new HttpHeaders();
+//	    
+//		try {
+//			logger.debug("Solicitando foto con id[" + photo.getPhotoId() + "]");
+//			Photo photoParam = new Photo();
+//			photoParam.setPhotoId(new BigDecimal(photo.getPhotoId()));
+//			p = photoManager.getPhotoById(photoParam, photo.getWidth(), photo.getHeigth());
+//			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+//		} catch (Exception e) {
+//			logger.error("Exception when getting thumb", e);
+//		}
+//		
+//		return new ResponseEntity<Photo>(p, headers, HttpStatus.CREATED);
+//	}
 
 	@CrossOrigin(origins = "*")
 	@RequestMapping(value="/downloadThumb", method=RequestMethod.POST)
