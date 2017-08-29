@@ -58,6 +58,9 @@ public class PhotoManager implements IPhotoManagement {
 					result = IPhotoManagement.ERROR;
 				} else {
 					FilesHelper.writeFile(photo.getBytes(), photo.getPath() + photo.getName());
+					if (!FilesHelper.existsThumb(photo, user, 100, 100)) {
+						FilesHelper.writeThumb(photo, user, 100, 100);
+					}
 				}
 				
 			} else {

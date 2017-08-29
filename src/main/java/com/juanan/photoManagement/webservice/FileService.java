@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -16,6 +18,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -57,6 +60,9 @@ public class FileService {
 	
 	@Autowired
 	private IDeviceManagement dM;	
+	
+	@Autowired
+	private ApplicationContext appContext;
 	
 	
 	
@@ -305,7 +311,7 @@ public class FileService {
 		}
 	}
 	
-	@RequestMapping(value="/startFromDisk", method=RequestMethod.GET)
+	@RequestMapping(value="/startFromDiskSerial", method=RequestMethod.GET)
 	public @ResponseBody List<Photo> startFromDisk() {
 		List<Photo> existingPhotos = new ArrayList<Photo>();
 		List<File> erroresFicheros = new ArrayList<File>();
@@ -347,6 +353,40 @@ public class FileService {
 				if (procesadas%200 == 0) {
 					logger.info(String.format("Fotos procesadas [%d] errores[%d] duplicadas[%d]", procesadas, errores, existingPhotos.size()));
 				}
+			}
+
+		} catch (Exception e) {
+			logger.error("Ha ocurrido una excepcion al subir las fotos", e);
+		}
+		
+		
+
+		return existingPhotos;		
+	}	
+	
+	@RequestMapping(value="/startFromDisk", method=RequestMethod.GET)
+	public @ResponseBody List<Photo> startFromDiskParallel() {
+		List<Photo> existingPhotos = new ArrayList<Photo>();
+		List<File> erroresFicheros = new ArrayList<File>();
+		
+		int errores = 0;
+		int procesadas = 0;
+		
+		try {			
+			List<File> photos = FilesHelper.getFiles(PHOTO_REPOSITORY_PATH);
+
+			logger.info("Found " + photos.size() + " photo(s)");
+
+			Date now = new Date();
+
+			Map<String, Device> mapDevices = dM.getAllDevices();
+			
+			ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
+			
+			for(File f : photos) {
+				ProcessFile p = (ProcessFile)appContext.getBean("processFile");
+				p.init(f, now, mapDevices);
+				executor.submit(p);
 			}
 
 		} catch (Exception e) {
