@@ -39,10 +39,10 @@ public class FilesHelper {
 	private static final String PARAM_WIDTH = "#{WIDTH}";
 	private static final String PARAM_HEIGHT = "#{HEIGTH}";
 	
-	//private static String PHOTO_BASE_PATH = "D:/PhotoRepository";
-	private static String PHOTO_BASE_PATH = "/zPendrive/PhotoRepository";
-	//private static String IM_PATH = "C:\\Program Files\\ImageMagick-7.0.6-Q16";
-	private static String IM_PATH = "/usr/bin";
+	private static String PHOTO_BASE_PATH = "D:/PhotoRepository";
+	//private static String PHOTO_BASE_PATH = "/zPendrive/PhotoRepository";
+	private static String IM_PATH = "C:\\Program Files\\ImageMagick-7.0.6-Q16";
+	//private static String IM_PATH = "/usr/bin";
 	private static final String PHOTO_DIR = "Photos";
 	private static final String THUMBNAILS_DIR = "Thumbs";
 	private static final String CACHE_DIR = "Cache";
